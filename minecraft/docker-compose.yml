@@ -1,0 +1,31 @@
+version: "3.7"
+services:
+  minecraft-server:
+    image: itzg/minecraft-server
+    container_name: mc
+    networks:
+      - "frontend"
+      - "minecraft"
+    ports:
+      - "25565:25565"
+    environment:
+      - EULA=TRUE
+      - VERSION=1.14.4
+      - OPS=ryancluff
+      - MEMORY=4G
+    volumes:
+      - ${CONFIGDIR}/minecraft/data:/data
+      - ${CONFIGDIR}/minecraft/config:/config
+      - ${CONFIGDIR}/minecraft/mods:/mods
+    labels:
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:minecraft.${DOMAINNAME}"
+      - "traefik.port=25565"
+    restart: unless-stopped
+
+networks:
+  frontend:
+    external:
+      name: "frontend"
+  minecraft:
+    name: "minecraft"

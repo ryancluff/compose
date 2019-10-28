@@ -1,0 +1,237 @@
+version: "3.7"
+services:
+  plex:
+    image: plexinc/pms-docker:latest
+    container_name: plex
+    networks:
+      - "frontend"
+      - "media"
+#    network_mode: host
+    volumes:
+      - ${CONFIGDIR}/media/plex:/config
+      - ${STORAGEDIR}/media/tvshows:/data/tvshows
+      - ${STORAGEDIR}/media/movies:/data/movies
+      - ${STORAGEDIR}/media/transcode:/transcode
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    ports:
+      - "192.168.1.2:32400:32400/tcp"
+      - "192.168.1.2:3005:3005/tcp"
+      - "192.168.1.2:8324:8324/tcp"
+      - "192.168.1.2:32469:32469/tcp"
+      - "192.168.1.2:1900:1900/udp"
+      - "192.168.1.2:32410:32410/udp"
+      - "192.168.1.2:32412:32412/udp"
+      - "192.168.1.2:32413:32413/udp"
+      - "192.168.1.2:32414:32414/udp"
+    restart: unless-stopped
+#   traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=32400"
+      - "traefik.frontend.rule=Host:plex.${DOMAINNAME}"
+      - "traefik.frontend.headers.frameDeny=false"
+
+  tautulli:
+    image: tautulli/tautulli:latest
+    container_name: tautulli
+    networks:
+      - "frontend"
+      - "media"
+    volumes:
+      - "${CONFIGDIR}/media/tautulli:/config"
+      - "${CONFIGDIR}/media/plex/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    ports:
+      - 8181:8181
+    restart: unless-stopped
+#   traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=8181"
+      - "traefik.frontend.rule=Host:tautulli.${DOMAINNAME}"
+      - "traefik.frontend.headers.frameDeny=false"
+
+  filebot:
+    image: coppit/filebot:latest
+    container_name: filebot
+    networks:
+      - "media"
+    volumes:
+      - ${STORAGEDIR}/media/:/output
+      - ${STORAGEDIR}/media/:/media:ro
+      - ${STORAGEDIR}/media/filebot:/input
+      - ${CONFIGDIR}/media/filebot:/config
+    restart: unless-stopped
+
+  radarr:
+    image: linuxserver/radarr:latest
+    container_name: "radarr"
+    networks:
+      - "frontend"
+      - "media"
+    volumes:
+      - ${CONFIGDIR}/media/radarr:/config
+      - ${STORAGEDIR}/media/movies:/movies
+      - ${STORAGEDIR}/download:/downloads
+#    ports:
+#      - "7878:7878"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    restart: unless-stopped
+#   traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=7878"
+      - "traefik.frontend.rule=Host:radarr.${DOMAINNAME}"
+      - "traefik.frontend.headers.frameDeny=false"
+
+  sonarr:
+    image: linuxserver/sonarr:latest
+    container_name: "sonarr"
+    networks:
+      - "frontend"
+      - "media"
+    volumes:
+      - ${CONFIGDIR}/media/sonarr:/config
+      - ${STORAGEDIR}/media/tvshows:/tv
+      - ${STORAGEDIR}/download:/downloads
+#    ports:
+#      - "8989:8989"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    restart: unless-stopped
+#   traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=8989"
+      - "traefik.frontend.rule=Host:sonarr.${DOMAINNAME}"
+      - "traefik.frontend.headers.frameDeny=false"
+
+  jackett:
+    image: linuxserver/jackett:latest
+    container_name: jackett
+    networks:
+      - "frontend"
+      - "media"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIGDIR}/media/jackett:/config
+      - ${STORAGEDIR}/download:/downloads
+#    ports:
+#      - 9117:9117
+    restart: unless-stopped
+    #traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=9117"
+      - "traefik.frontend.rule=Host:jackett.${DOMAINNAME}"
+      - "traefik.frontend.headers.frameDeny=false"
+
+  ombi:
+    image: linuxserver/ombi:latest
+    container_name: ombi
+    networks:
+      - "frontend"
+      - "media"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIGDIR}/media/ombi:/config
+#    ports:
+#      - 3579:3579
+    restart: unless-stopped
+    #traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=3579"
+      - "traefik.frontend.rule=Host:ombi.${DOMAINNAME}"
+      - "traefik.frontend.headers.frameDeny=false"
+
+  vpn:
+    image: colinhebert/pia-openvpn:latest
+    container_name: vpn
+    networks:
+      - "frontend"
+      - "media"
+    dns:
+      - "209.222.18.222" 
+      - "209.222.18.218"
+    cap_add:
+      - net_admin
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - "REGION=US East"
+      - USERNAME=${PIA_USER}
+      - PASSWORD=${PIA_PASS}
+    restart: unless-stopped
+
+  qbittorrent:
+    image: linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - UMASK_SET=022
+      - WEBUI_PORT=8080
+    volumes:
+      - ${CONFIGDIR}/media/qbittorrent:/config
+      - ${STORAGEDIR}/download:/downloads
+#    ports:
+#      - 8080:8080
+#      - 6881:6881
+#      - 6881:6881/udp
+    depends_on: 
+      - vpn
+    network_mode: service:vpn
+    restart: unless-stopped
+#   traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=8080"
+      - "traefik.frontend.rule=Host:qbittorrent.${DOMAINNAME}"
+      - "traefik.frontend.headers.frameDeny=false"
+
+  organizr:
+    image: lsiocommunity/organizr:latest
+    container_name: organizr
+    networks:
+      - "frontend"
+      - "media"
+#    ports:
+#      - "80:80"
+    volumes:
+      - ${CONFIGDIR}/media/organizr:/config
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+    restart: unless-stopped
+#   traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.frontend.rule=Host:organizr.${DOMAINNAME}"
+      - "traefik.frontend.headers.frameDeny=false"
+
+networks:
+  frontend:
+    external:
+      name: "frontend"
+  media:
+    name: "media"

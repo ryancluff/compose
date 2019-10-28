@@ -1,0 +1,154 @@
+version: "3.7"
+services:
+  traefik:
+    image: traefik:1.7
+    container_name: traefik
+    networks:
+      - "frontend"
+      - "network"
+    dns:
+      - "1.1.1.1"
+    domainname: ${DOMAINNAME}
+    ports:
+      - "192.168.1.2:80:80"
+      - "192.168.1.2:443:443"
+#      - "192.168.1.2:8080:8080"
+    environment:
+      - CF_API_EMAIL=${CLOUDFLARE_EMAIL}
+      - CF_API_KEY=${CLOUDFLARE_API_KEY}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:traefik.${DOMAINNAME}"
+      - "traefik.port=8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${CONFIGDIR}/network/traefik/config:/etc/traefik
+      - ${CONFIGDIR}/network/traefik/tmp:/tmp
+    restart: unless-stopped
+
+#  unifi:
+#    image: linuxserver/unifi-controller
+#    container_name: unifi-controller
+#    networks:
+#      - "frontend"
+#      - "network"
+#    environment:
+#      - PUID=${PUID}
+#      - PGID=${PGID}
+#      - MEM_LIMIT=1024M
+#    volumes:
+#      - ${CONFIGDIR}/network/unifi:/config
+#    ports:
+#      - 3478:3478/udp
+#      - 10001:10001/udp
+#      - 8080:8080
+#      - 8081:8081
+#      - 8443:8443
+#      - 8843:8843
+#      - 8880:8880
+#      - 6789:6789
+#    restart: unless-stopped
+#   traefik
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.port=8443"
+#      - "traefik.protocol=https"
+#      - "traefik.frontend.rule=Host:unifi.${DOMAINNAME}"
+#      - "traefik.frontend.headers.frameDeny=false"
+
+  unifi:
+    image: linuxserver/unifi-controller:latest
+    container_name: "unifi"
+    volumes:
+      - ${CONFIGDIR}/network/unifi:/config
+    ports:
+      - 3478:3478/udp
+      - 10001:10001/udp
+      - 8080:8080
+      - 8081:8081
+      - 8443:8443
+      - 8843:8843
+      - 8880:8880
+      - 6789:6789
+    networks:
+      - "frontend"
+      - "network"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=8443"
+      - "traefik.protocol=https"
+      - "traefik.frontend.rule=Host:unifi.${DOMAINNAME}"
+      - "traefik.frontend.headers.frameDeny=false"
+
+#   pihole:
+#     container_name: pihole
+#     image: pihole/pihole:latest
+#     networks:
+#       - "frontend"
+#       - "network"
+#     cap_add:
+#       - NET_ADMIN
+#     ports:
+#       - "192.168.1.4:53:53/tcp"
+#       - "192.168.1.4:53:53/udp"
+#       - "192.168.1.4:67:67/udp"
+#     environment:
+#       - TZ=${TZ}
+#       - WEBPASSWORD=${PIHOLE_PASS}
+#       - DNS1=8.8.8.8
+#       - DNS2=8.8.4.4
+#       - VIRTUAL_HOST=pihole.rcluff.com
+#       - VIRTUAL_PORT=80
+#     volumes:
+#       - '${CONFIGDIR}/network/pihole/etc-pihole/:/etc/pihole/'
+#       - '${CONFIGDIR}/network/pihole/etc-dnsmasq.d/:/etc/dnsmasq.d/'
+#     restart: unless-stopped
+# #   traefik
+#     labels:
+#       - "traefik.enable=true"
+#       - "traefik.port=80"
+#       - "traefik.frontend.rule=HostRegexp:pihole.${DOMAINNAME},{catchall:.*}"
+#       - "traefik.frontend.headers.frameDeny=false"
+#       - "traefik.frontend.priority=1"
+#       - "traefik.backend=pihole"
+
+#   pihole3:
+#     container_name: pihole3
+#     image: pihole/pihole:latest
+#     cap_add:
+#       - NET_ADMIN
+#     ports:
+#       - "192.168.0.1:53:53/tcp"
+#       - "192.168.0.1:53:53/udp"
+#       - "192.168.0.1:67:67/udp"
+#     environment:
+#       - TZ=${TZ}
+#       - WEBPASSWORD=${PIHOLE_PASS}
+#       - DNS1=8.8.8.8
+#       - DNS2=8.8.4.4
+#       - VIRTUAL_HOST=pihole3.rcluff.com
+#       - VIRTUAL_PORT=80
+#     volumes:
+#       - '${CONFIGDIR}/network/pihole3/etc-pihole/:/etc/pihole/'
+#       - '${CONFIGDIR}/network/pihole3/etc-dnsmasq.d/:/etc/dnsmasq.d/'
+#     restart: unless-stopped
+# #   traefik
+#     labels:
+#       - "traefik.enable=true"
+#       - "traefik.port=80"
+#       - "traefik.frontend.rule=HostRegexp:pihole3.${DOMAINNAME},{catchall:.*}"
+#       - "traefik.frontend.headers.frameDeny=false"
+#       - "traefik.frontend.priority=1"
+#       - "traefik.backend=pihole"
+
+networks:
+  frontend:
+    external:
+      name: "frontend"
+  network:
+    name: "network"

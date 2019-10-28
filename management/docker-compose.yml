@@ -1,0 +1,83 @@
+version: "3.7"
+services:
+  portainer:
+    image: portainer/portainer:latest
+    container_name: portainer
+    networks:
+      - "frontend"
+      - "management"
+#    cap_add:
+#      - HOST_MANAGEMENT
+    ports:
+      - "9000:9000"
+    volumes:
+      - ${CONFIGDIR}/management/portainer:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+#   traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=9000"
+      - "traefik.frontend.rule=Host:portainer.${DOMAINNAME}"
+      - "traefik.frontend.headers.frameDeny=false"
+
+  watchtower:
+    image: v2tec/watchtower:latest
+    container_name: watchtower
+    networks:
+      - "management"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+  grafanaDB:
+    image: influxdb:latest
+    container_name: grafanaDB
+    networks:
+      - "management"
+    volumes:
+      - ${CONFIGDIR}/management/grafanaDB:/var/lib/influxdb
+    environment:
+      - "INFLUXDB_DB=grafana"
+      - "INFLUXDB_HTTP_AUTH_ENABLED=true"
+      - "INFLUXDB_ADMIN_USER=root"
+      - "INFLUXDB_ADMIN_PASSWORD=${GRAFANA_DB_ROOT}"
+      - "INFLUXDB_USER=ryan"
+      - "INFLUXDB_PASSWORD=${GRAFANA_DB}"
+    restart: unless-stopped
+#   traefik
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.port=8086"
+#      - "traefik.frontend.rule=Host:grafanadb.${DOMAINNAME}"
+#      - "traefik.frontend.headers.frameDeny=false"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    networks:
+      - "frontend"
+      - "management"
+#    ports:
+#      - "192.168.1.2:3000:3000"
+    volumes:
+      - ${CONFIGDIR}/management/grafana:/var/lib/grafana
+    environment:
+      - "GF_SECURITY_ADMIN_PASSWORD=${GRAFANA}"
+    depends_on:
+      - grafanaDB
+    restart: unless-stopped
+#   traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=3000"
+      - "traefik.frontend.rule=Host:grafana.${DOMAINNAME}"
+      - "traefik.frontend.headers.frameDeny=false"
+
+networks:
+  frontend:
+    external:
+      name: "frontend"
+  management:
+    name: "management"
+  
