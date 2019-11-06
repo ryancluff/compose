@@ -1,0 +1,55 @@
+version: "3.7"
+services:
+  vpn:
+    image: colinhebert/pia-openvpn:latest
+    container_name: vpn
+    networks:
+      - "frontend"
+      - "media"
+    dns:
+      - "209.222.18.222" 
+      - "209.222.18.218"
+    cap_add:
+      - net_admin
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - "REGION=Sweden"
+      - USERNAME=${PIA_USER}
+      - PASSWORD=${PIA_PASS}
+    restart: unless-stopped
+
+  qbittorrent:
+    image: linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - UMASK_SET=022
+      - WEBUI_PORT=8080
+    volumes:
+      - ${CONFIGDIR}/media/qbittorrent:/config
+      - ${STORAGEDIR}/download:/downloads
+#    ports:
+#      - 8080:8080
+#      - 6881:6881
+#      - 6881:6881/udp
+    depends_on: 
+      - vpn
+    network_mode: service:vpn
+    restart: unless-stopped
+#   traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=8080"
+      - "traefik.frontend.rule=Host:qbittorrent.${DOMAINNAME}"
+      - "traefik.frontend.headers.frameDeny=false"
+
+networks:
+  frontend:
+    external:
+      name: "frontend"
+  media:
+    external:
+      name: "media"
