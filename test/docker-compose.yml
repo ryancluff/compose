@@ -8,6 +8,22 @@ services:
 #      - "traefik.frontend.rule=Host:unifi.${DOMAINNAME}"
 #      - "traefik.frontend.headers.frameDeny=false"
 
+  # docker container run --publish 8000:8080 --detach --name bb bulletinboard:1.0
+  bulletinboard:
+    image: bulletinboard:1.0
+    container_name: bullitinboard
+    networks:
+      - test
+      - frontend
+    #ports:
+    #  - 8080:8080
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=8080"
+      - "traefik.protocol=http"
+      - "traefik.frontend.rule=Host:board.${DOMAINNAME}"
+      - "traefik.frontend.headers.frameDeny=false"
+
 networks:
   frontend:
     external:
