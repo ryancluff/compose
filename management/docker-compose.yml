@@ -74,6 +74,38 @@ services:
       - "traefik.frontend.rule=Host:grafana.${DOMAINNAME}"
       - "traefik.frontend.headers.frameDeny=false"
 
+# docker create \
+#     --name=monitorr \
+#     --restart=on-failure \
+#     -v <host path for app data>:/app \
+#     -e TZ=<timezone> \
+#     -e PGID=<groupid> \
+#     -e PUID=<userid> \
+#     -p 80:80 \
+#     monitorr/monitorr
+
+  monitorr:
+    image: monitorr/monitorr
+    container_name: monitorr
+    networks:
+      - management
+      - frontend
+  #  ports:
+  #    - 80:80
+    volumes:
+      - ${CONFIGDIR}/management/monitorr:/app
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.frontend.rule=Host:monitorr.${DOMAINNAME}"
+      - "traefik.frontend.headers.frameDeny=false"
+    restart: unless-stopped
+    
+
 networks:
   frontend:
     external:

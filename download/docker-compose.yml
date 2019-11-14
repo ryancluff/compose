@@ -14,7 +14,7 @@ services:
     devices:
       - /dev/net/tun:/dev/net/tun
     environment:
-      - "REGION=Sweden"
+      - "REGION=US West"
       - USERNAME=${PIA_USER}
       - PASSWORD=${PIA_PASS}
     restart: unless-stopped
