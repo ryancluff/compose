@@ -6,6 +6,7 @@ services:
     networks:
       - "frontend"
       - "media"
+      - "ext"
 #    network_mode: host
     volumes:
       - ${CONFIGDIR}/media/plex:/config
@@ -33,6 +34,32 @@ services:
       - "traefik.port=32400"
       - "traefik.frontend.rule=Host:plex.${DOMAINNAME}"
       - "traefik.frontend.headers.frameDeny=false"
+
+  jellyfin:
+    image: linuxserver/jellyfin:latest
+    container_name: jellyfin
+    networks:
+      - frontend
+      - media
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIGDIR}/media/jellyfin:/config
+      - ${STORAGEDIR}/media/tvshows:/data/tvshows
+      - ${STORAGEDIR}/media/movies:/data/movies
+      - ${STORAGEDIR}/media/transcode:/transcode
+#    ports:
+#      - 8096:8096
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=8096"
+      - "traefik.protocol=http"
+      - "traefik.frontend.rule=Host:jellyfin.${DOMAINNAME}"
+      - "traefik.frontend.headers.frameDeny=false"
+
 
   tautulli:
     image: tautulli/tautulli:latest
@@ -187,5 +214,8 @@ networks:
   frontend:
     external:
       name: "frontend"
+  ext:
+    external:
+      name: "ext"
   media:
     name: "media"

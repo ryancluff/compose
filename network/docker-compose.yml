@@ -26,36 +26,6 @@ services:
       - ${CONFIGDIR}/network/traefik/tmp:/tmp
     restart: unless-stopped
 
-#  unifi:
-#    image: linuxserver/unifi-controller
-#    container_name: unifi-controller
-#    networks:
-#      - "frontend"
-#      - "network"
-#    environment:
-#      - PUID=${PUID}
-#      - PGID=${PGID}
-#      - MEM_LIMIT=1024M
-#    volumes:
-#      - ${CONFIGDIR}/network/unifi:/config
-#    ports:
-#      - 3478:3478/udp
-#      - 10001:10001/udp
-#      - 8080:8080
-#      - 8081:8081
-#      - 8443:8443
-#      - 8843:8843
-#      - 8880:8880
-#      - 6789:6789
-#    restart: unless-stopped
-#   traefik
-#    labels:
-#      - "traefik.enable=true"
-#      - "traefik.port=8443"
-#      - "traefik.protocol=https"
-#      - "traefik.frontend.rule=Host:unifi.${DOMAINNAME}"
-#      - "traefik.frontend.headers.frameDeny=false"
-
   unifi:
     image: linuxserver/unifi-controller:latest
     container_name: "unifi"
@@ -84,6 +54,30 @@ services:
       - "traefik.protocol=https"
       - "traefik.frontend.rule=Host:unifi.${DOMAINNAME}"
       - "traefik.frontend.headers.frameDeny=false"
+
+  traefikExt:
+    image: traefik:1.7
+    container_name: traefikExt
+    networks:
+    - "ext"
+    dns:
+      - "1.1.1.1"
+    domainname: ${DOMAINNAME}
+    ports:
+      - "192.168.1.3:80:80"
+      - "192.168.1.3:443:443"
+    environment:
+      - CF_API_EMAIL=${CLOUDFLARE_EMAIL}
+      - CF_API_KEY=${CLOUDFLARE_API_KEY}
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.frontend.rule=Host:traefik.${DOMAINNAME}"
+    #   - "traefik.port=8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${CONFIGDIR}/network/traefikExt/config:/etc/traefik
+      - ${CONFIGDIR}/network/traefikExt/tmp:/tmp
+    restart: unless-stopped
 
 #   pihole:
 #     container_name: pihole
@@ -152,3 +146,5 @@ networks:
       name: "frontend"
   network:
     name: "network"
+  ext:
+    name: "ext"

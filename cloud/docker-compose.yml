@@ -106,5 +106,8 @@ networks:
   frontend:
     external:
       name: "frontend"
+  ext:
+    external:
+      name: "ext"
   cloud:
     name: "cloud"
