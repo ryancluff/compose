@@ -14,7 +14,7 @@ services:
     devices:
       - /dev/net/tun:/dev/net/tun
     environment:
-      - "REGION=US West"
+      - "REGION=US East"
       - USERNAME=${PIA_USER}
       - PASSWORD=${PIA_PASS}
     restart: unless-stopped
@@ -29,7 +29,7 @@ services:
       - UMASK_SET=022
       - WEBUI_PORT=8080
     volumes:
-      - ${CONFIGDIR}/media/qbittorrent:/config
+      - ${CONFIGDIR}/download/qbittorrent:/config
       - ${STORAGEDIR}/download:/downloads
 #    ports:
 #      - 8080:8080

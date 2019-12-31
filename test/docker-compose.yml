@@ -9,11 +9,17 @@ services:
 #      - "traefik.frontend.headers.frameDeny=false"
 
   openvpn:
-    image: alpine:latest
-    container_name: openvpn
+    image: rcluff/openvpn-client:latest
+    container_name: openvpn-client
     networks:
       - test
-      - frontend
+    cap_add:
+      - net_admin
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - USER=${PIA_USER}
+      - PASS=${PIA_PASS}
     restart: unless-stopped
 
 
