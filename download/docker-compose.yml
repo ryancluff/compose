@@ -46,6 +46,26 @@ services:
       - "traefik.frontend.rule=Host:qbittorrent.${DOMAINNAME}"
       - "traefik.frontend.headers.frameDeny=false"
 
+  # deluge:
+  #   image: linuxserver/deluge
+  #   container_name: deluge
+  #   environment:
+  #     - PUID=${PUID}
+  #     - PGID=${PGID}
+  #     - TZ=${TZ}
+  #   volumes:
+  #     - ${CONFIGDIR}/download/deluge/config:/config
+  #     - ${STORAGEDIR}/download:/downloads
+  #   depends_on: 
+  #     - vpn
+  #   network_mode: service:vpn
+  #   restart: unless-stopped
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.port=8112"
+  #     - "traefik.frontend.rule=Host:deluge.${DOMAINNAME}"
+  #     - "traefik.frontend.headers.frameDeny=false"
+
 networks:
   frontend:
     external:

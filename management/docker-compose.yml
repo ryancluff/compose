@@ -105,6 +105,33 @@ services:
       - "traefik.frontend.headers.frameDeny=false"
     restart: unless-stopped
     
+  healthchecks:
+    image: linuxserver/healthchecks
+    container_name: healthchecks
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      # - SITE_ROOT=<SITE_ROOT>
+      # - SITE_NAME=<SITE_NAME>
+      # - DEFAULT_FROM_EMAIL=<DEFAULT_FROM_EMAIL>
+      # - EMAIL_HOST=<EMAIL_HOST>
+      # - EMAIL_PORT=<EMAIL_PORT>
+      # - EMAIL_HOST_USER=<EMAIL_HOST_USER>
+      # - EMAIL_HOST_PASSWORD=<EMAIL_HOST_PASSWORD>
+      # - EMAIL_USE_TLS=<EMAIL_USE_TLS>
+      # - ALLOWED_HOSTS=<ALLOWED_HOSTS>
+      # - SUPERUSER_EMAIL=<SUPERUSER_EMAIL>
+      # - SUPERUSER_PASSWORD=<SUPERUSER_PASSWORD>
+    volumes:
+      - ${CONFIGDIR}/management/healthchecks:/config
+    # ports:
+    #   - 8000:8000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=8000"
+      - "traefik.frontend.rule=Host:healthchecks.${DOMAINNAME}"
+      - "traefik.frontend.headers.frameDeny=false"
+    restart: unless-stopped
 
 networks:
   frontend:

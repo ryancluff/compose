@@ -47,6 +47,26 @@ services:
       - ${CONFIGDIR}/dev/guacamoleDB/scripts:/tmp/scripts
     restart: unless-stopped
 
+# docker run -d -v jenkins_home:/var/jenkins_home -p 8080:8080 -p 50000:50000 jenkins/jenkins:lts
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    networks:
+      - "dev"
+      - "frontend"
+    volumes:
+      - ${CONFIGDIR}/dev/jenkins:/var/jenkins_home
+    ports:
+      - 8083:8080
+      - 50000:50000
+    restart: unless-stopped
+#   traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=8080"
+      - "traefik.frontend.rule=Host:jenkins.${DOMAINNAME}"
+      - "traefik.frontend.headers.frameDeny=false"
+
 networks:
   frontend:
     external:
