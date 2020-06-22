@@ -1,50 +1,41 @@
 version: "3.7"
 services:
-  guacd:
-    image: guacamole/guacd
-    container_name: guacd
+  gogs:
+    image: gogs/gogs:latest
+    container_name: gogs
     networks:
-      - dev
+      - "frontend"
+      - "dev"
+#    ports:
+#      - "10080:3000"
+#      - "10022:22"
+    volumes:
+      - ${CONFIGDIR}/dev/gogs/data:/data
+      - ${CONFIGDIR}/dev/gogs/backup:/backup
+    depends_on:
+      - gogsDB
     restart: unless-stopped
-
-  guacamole:
-    image: guacamole/guacamole
-    container_name: guacamole
-    networks:
-      - frontend
-      - dev
-    ports:
-      - "8088:8080"
-    environment:
-      - GUACD_HOSTNAME=guacd
-      - MYSQL_HOSTNAME=guacamoleDB
-      - MYSQL_DATABASE=guacamole
-      - MYSQL_USER=guacamole
-      - MYSQL_PASSWORD=${GUACAMOLE_DB}
-    restart: unless-stopped
-#   traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.port=8080"
-      - "traefik.frontend.rule=Host:guac.${DOMAINNAME}"
+      - "traefik.port=3000"
+      - "traefik.frontend.rule=Host:gogs.${DOMAINNAME}"
       - "traefik.frontend.headers.frameDeny=false"
 
-  guacamoleDB:
+  gogsDB:
     image: mysql:latest
-    container_name: guacamoleDB
+    container_name: gogsDB
     networks:
       - "dev"
     environment:
-      - MYSQL_ROOT_PASSWORD=${GUACAMOLE_DB_ROOT}
-      - MYSQL_DATABASE=guacamole
-      - MYSQL_USER=guacamole
-      - MYSQL_PASSWORD=${GUACAMOLE_DB}
+      - MYSQL_ROOT_PASSWORD=${GOGS_DB_ROOT}
+      - MYSQL_DATABASE=gogs
+      - MYSQL_USER=gogs
+      - MYSQL_PASSWORD=${GOGS_DB}
 #    ports:
-#      - "3306:3306"
+#      - "10036:3306"
     volumes:
-      - ${CONFIGDIR}/dev/guacamoleDB/config:/etc/mysql/conf.d
-      - ${CONFIGDIR}/dev/guacamoleDB/db:/var/lib/mysql
-      - ${CONFIGDIR}/dev/guacamoleDB/scripts:/tmp/scripts
+      - ${CONFIGDIR}/dev/gogsDB/config:/etc/mysql/conf.d
+      - ${CONFIGDIR}/dev/gogsDB/db:/var/lib/mysql
     restart: unless-stopped
 
 # docker run -d -v jenkins_home:/var/jenkins_home -p 8080:8080 -p 50000:50000 jenkins/jenkins:lts

@@ -11,10 +11,16 @@ services:
       - "209.222.18.218"
     cap_add:
       - net_admin
+    ports:
+     - 6881:6881
+     - 6881:6881/udp
     devices:
       - /dev/net/tun:/dev/net/tun
     environment:
-      - "REGION=US East"
+      #- "REGION=Finland"
+      - "REGION=Sweden"
+      #- "REGION=US East"
+      #- "REGION=US West"
       - USERNAME=${PIA_USER}
       - PASSWORD=${PIA_PASS}
     restart: unless-stopped
@@ -45,26 +51,6 @@ services:
       - "traefik.port=8080"
       - "traefik.frontend.rule=Host:qbittorrent.${DOMAINNAME}"
       - "traefik.frontend.headers.frameDeny=false"
-
-  # deluge:
-  #   image: linuxserver/deluge
-  #   container_name: deluge
-  #   environment:
-  #     - PUID=${PUID}
-  #     - PGID=${PGID}
-  #     - TZ=${TZ}
-  #   volumes:
-  #     - ${CONFIGDIR}/download/deluge/config:/config
-  #     - ${STORAGEDIR}/download:/downloads
-  #   depends_on: 
-  #     - vpn
-  #   network_mode: service:vpn
-  #   restart: unless-stopped
-  #   labels:
-  #     - "traefik.enable=true"
-  #     - "traefik.port=8112"
-  #     - "traefik.frontend.rule=Host:deluge.${DOMAINNAME}"
-  #     - "traefik.frontend.headers.frameDeny=false"
 
 networks:
   frontend:

@@ -1,6 +1,6 @@
 version: "3.7"
 services:
-  minecraft-server:
+  minecraft-java:
     image: itzg/minecraft-server
     container_name: mc
     networks:
@@ -17,10 +17,6 @@ services:
       - ${CONFIGDIR}/minecraft/standard/data:/data
       - ${CONFIGDIR}/minecraft/standard/config:/config
       - ${CONFIGDIR}/minecraft/standard/mods:/mods
-    labels:
-      - "traefik.enable=true"
-      - "traefik.frontend.rule=Host:minecraft.${DOMAINNAME}"
-      - "traefik.port=25565"
     restart: unless-stopped
 
   minecraft-bedrock:
@@ -30,17 +26,13 @@ services:
       - "frontend"
       - "minecraft"
     ports:
-      - "19132:19132/udp"
+      - "19132:19132"
     environment:
       - SERVER_NAME=TheCommune
       - DIFFICULTY=normal
       - EULA=TRUE
     volumes:
       - ${CONFIGDIR}/minecraft/bedrock/data:/data
-    labels:
-      - "traefik.enable=true"
-      - "traefik.frontend.rule=Host:bedrock.${DOMAINNAME}"
-      - "traefik.port=19132"
     restart: unless-stopped
 
 networks:

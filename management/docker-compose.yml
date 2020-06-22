@@ -30,107 +30,51 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
 
-  grafanaDB:
-    image: influxdb:latest
-    container_name: grafanaDB
+  guacamole:
+    image: guacamole/guacamole
+    container_name: guacamole
     networks:
-      - "management"
-    volumes:
-      - ${CONFIGDIR}/management/grafanaDB:/var/lib/influxdb
+      - frontend
+      - management
+    ports:
+      - "8088:8080"
     environment:
-      - "INFLUXDB_DB=grafana"
-      - "INFLUXDB_HTTP_AUTH_ENABLED=true"
-      - "INFLUXDB_ADMIN_USER=root"
-      - "INFLUXDB_ADMIN_PASSWORD=${GRAFANA_DB_ROOT}"
-      - "INFLUXDB_USER=ryan"
-      - "INFLUXDB_PASSWORD=${GRAFANA_DB}"
-    restart: unless-stopped
-#   traefik
-#    labels:
-#      - "traefik.enable=true"
-#      - "traefik.port=8086"
-#      - "traefik.frontend.rule=Host:grafanadb.${DOMAINNAME}"
-#      - "traefik.frontend.headers.frameDeny=false"
-
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    networks:
-      - "frontend"
-      - "management"
-#    ports:
-#      - "192.168.1.2:3000:3000"
-    volumes:
-      - ${CONFIGDIR}/management/grafana:/var/lib/grafana
-    environment:
-      - "GF_SECURITY_ADMIN_PASSWORD=${GRAFANA}"
-    depends_on:
-      - grafanaDB
+      - GUACD_HOSTNAME=guacd
+      - MYSQL_HOSTNAME=guacamoleDB
+      - MYSQL_DATABASE=guacamole
+      - MYSQL_USER=guacamole
+      - MYSQL_PASSWORD=${GUACAMOLE_DB}
     restart: unless-stopped
 #   traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.port=3000"
-      - "traefik.frontend.rule=Host:grafana.${DOMAINNAME}"
+      - "traefik.port=8080"
+      - "traefik.frontend.rule=Host:guac.${DOMAINNAME}"
       - "traefik.frontend.headers.frameDeny=false"
 
-# docker create \
-#     --name=monitorr \
-#     --restart=on-failure \
-#     -v <host path for app data>:/app \
-#     -e TZ=<timezone> \
-#     -e PGID=<groupid> \
-#     -e PUID=<userid> \
-#     -p 80:80 \
-#     monitorr/monitorr
+  guacamoleDB:
+    image: mysql:latest
+    container_name: guacamoleDB
+    networks:
+      - "management"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${GUACAMOLE_DB_ROOT}
+      - MYSQL_DATABASE=guacamole
+      - MYSQL_USER=guacamole
+      - MYSQL_PASSWORD=${GUACAMOLE_DB}
+#    ports:
+#      - "3306:3306"
+    volumes:
+      - ${CONFIGDIR}/management/guacamoleDB/config:/etc/mysql/conf.d
+      - ${CONFIGDIR}/management/guacamoleDB/db:/var/lib/mysql
+      - ${CONFIGDIR}/management/guacamoleDB/scripts:/tmp/scripts
+    restart: unless-stopped
 
-  monitorr:
-    image: monitorr/monitorr
-    container_name: monitorr
+  guacd:
+    image: guacamole/guacd
+    container_name: guacd
     networks:
       - management
-      - frontend
-  #  ports:
-  #    - 80:80
-    volumes:
-      - ${CONFIGDIR}/management/monitorr:/app
-    environment:
-      - TZ=${TZ}
-      - PUID=${PUID}
-      - PGID=${PGID}
-    labels:
-      - "traefik.enable=true"
-      - "traefik.port=80"
-      - "traefik.frontend.rule=Host:monitorr.${DOMAINNAME}"
-      - "traefik.frontend.headers.frameDeny=false"
-    restart: unless-stopped
-    
-  healthchecks:
-    image: linuxserver/healthchecks
-    container_name: healthchecks
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      # - SITE_ROOT=<SITE_ROOT>
-      # - SITE_NAME=<SITE_NAME>
-      # - DEFAULT_FROM_EMAIL=<DEFAULT_FROM_EMAIL>
-      # - EMAIL_HOST=<EMAIL_HOST>
-      # - EMAIL_PORT=<EMAIL_PORT>
-      # - EMAIL_HOST_USER=<EMAIL_HOST_USER>
-      # - EMAIL_HOST_PASSWORD=<EMAIL_HOST_PASSWORD>
-      # - EMAIL_USE_TLS=<EMAIL_USE_TLS>
-      # - ALLOWED_HOSTS=<ALLOWED_HOSTS>
-      # - SUPERUSER_EMAIL=<SUPERUSER_EMAIL>
-      # - SUPERUSER_PASSWORD=<SUPERUSER_PASSWORD>
-    volumes:
-      - ${CONFIGDIR}/management/healthchecks:/config
-    # ports:
-    #   - 8000:8000
-    labels:
-      - "traefik.enable=true"
-      - "traefik.port=8000"
-      - "traefik.frontend.rule=Host:healthchecks.${DOMAINNAME}"
-      - "traefik.frontend.headers.frameDeny=false"
     restart: unless-stopped
 
 networks:

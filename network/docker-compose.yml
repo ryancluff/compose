@@ -12,7 +12,7 @@ services:
     ports:
       - "192.168.1.2:80:80"
       - "192.168.1.2:443:443"
-#      - "192.168.1.2:8080:8080"
+#      - "192.168.1.2:8082:8080"
     environment:
       - CF_API_EMAIL=${CLOUDFLARE_EMAIL}
       - CF_API_KEY=${CLOUDFLARE_API_KEY}
@@ -78,67 +78,6 @@ services:
       - ${CONFIGDIR}/network/traefikExt/config:/etc/traefik
       - ${CONFIGDIR}/network/traefikExt/tmp:/tmp
     restart: unless-stopped
-
-#   pihole:
-#     container_name: pihole
-#     image: pihole/pihole:latest
-#     networks:
-#       - "frontend"
-#       - "network"
-#     cap_add:
-#       - NET_ADMIN
-#     ports:
-#       - "192.168.1.4:53:53/tcp"
-#       - "192.168.1.4:53:53/udp"
-#       - "192.168.1.4:67:67/udp"
-#     environment:
-#       - TZ=${TZ}
-#       - WEBPASSWORD=${PIHOLE_PASS}
-#       - DNS1=8.8.8.8
-#       - DNS2=8.8.4.4
-#       - VIRTUAL_HOST=pihole.rcluff.com
-#       - VIRTUAL_PORT=80
-#     volumes:
-#       - '${CONFIGDIR}/network/pihole/etc-pihole/:/etc/pihole/'
-#       - '${CONFIGDIR}/network/pihole/etc-dnsmasq.d/:/etc/dnsmasq.d/'
-#     restart: unless-stopped
-# #   traefik
-#     labels:
-#       - "traefik.enable=true"
-#       - "traefik.port=80"
-#       - "traefik.frontend.rule=HostRegexp:pihole.${DOMAINNAME},{catchall:.*}"
-#       - "traefik.frontend.headers.frameDeny=false"
-#       - "traefik.frontend.priority=1"
-#       - "traefik.backend=pihole"
-
-#   pihole3:
-#     container_name: pihole3
-#     image: pihole/pihole:latest
-#     cap_add:
-#       - NET_ADMIN
-#     ports:
-#       - "192.168.0.1:53:53/tcp"
-#       - "192.168.0.1:53:53/udp"
-#       - "192.168.0.1:67:67/udp"
-#     environment:
-#       - TZ=${TZ}
-#       - WEBPASSWORD=${PIHOLE_PASS}
-#       - DNS1=8.8.8.8
-#       - DNS2=8.8.4.4
-#       - VIRTUAL_HOST=pihole3.rcluff.com
-#       - VIRTUAL_PORT=80
-#     volumes:
-#       - '${CONFIGDIR}/network/pihole3/etc-pihole/:/etc/pihole/'
-#       - '${CONFIGDIR}/network/pihole3/etc-dnsmasq.d/:/etc/dnsmasq.d/'
-#     restart: unless-stopped
-# #   traefik
-#     labels:
-#       - "traefik.enable=true"
-#       - "traefik.port=80"
-#       - "traefik.frontend.rule=HostRegexp:pihole3.${DOMAINNAME},{catchall:.*}"
-#       - "traefik.frontend.headers.frameDeny=false"
-#       - "traefik.frontend.priority=1"
-#       - "traefik.backend=pihole"
 
 networks:
   frontend:

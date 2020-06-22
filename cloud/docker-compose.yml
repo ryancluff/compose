@@ -6,6 +6,7 @@ services:
     networks:
       - "frontend"
       - "cloud"
+      - "ext"
     volumes:
       - ${CONFIGDIR}/cloud/nextcloud/config:/config
       - ${CONFIGDIR}/cloud/nextcloud/data:/data
@@ -45,49 +46,13 @@ services:
 #      - 192.168.1.2:3306:3306
     restart: unless-stopped
 
-  gogs:
-    image: gogs/gogs:latest
-    container_name: gogs
-    networks:
-      - "frontend"
-      - "cloud"
-#    ports:
-#      - "10080:3000"
-#      - "10022:22"
-    volumes:
-      - ${CONFIGDIR}/cloud/gogs:/data
-    depends_on:
-      - gogsDB
-    restart: unless-stopped
-    labels:
-      - "traefik.enable=true"
-      - "traefik.port=3000"
-      - "traefik.frontend.rule=Host:gogs.${DOMAINNAME}"
-      - "traefik.frontend.headers.frameDeny=false"
-
-  gogsDB:
-    image: mysql:latest
-    container_name: gogsDB
-    networks:
-      - "cloud"
-    environment:
-      - MYSQL_ROOT_PASSWORD=${GOGS_DB_ROOT}
-      - MYSQL_DATABASE=gogs
-      - MYSQL_USER=gogs
-      - MYSQL_PASSWORD=${GOGS_DB}
-#    ports:
-#      - "10036:3306"
-    volumes:
-      - ${CONFIGDIR}/cloud/gogsDB/config:/etc/mysql/conf.d
-      - ${CONFIGDIR}/cloud/gogsDB/db:/var/lib/mysql
-    restart: unless-stopped
-
   bitwarden:
     image: bitwardenrs/server:latest
     container_name: bitwarden
     networks:
       - "frontend"
       - "cloud"
+      - "ext"
 #    ports:
 #      - 80:80
 #      - 3012:3012

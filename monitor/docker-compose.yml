@@ -1,0 +1,66 @@
+version: "3.7"
+services:
+  telegraf:
+    image: telegraf
+    container_name: telegraf
+    networks:
+      - "monitor"
+    environment:
+      - HOST_PROC=/rootfs/proc
+      - HOST_SYS=/rootfs/sys
+      - HOST_ETC=/rootfs/etc
+    volumes:
+      - ${CONFIGDIR}/monitor/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys:/rootfs/sys:ro
+      - /proc:/rootfs/proc:ro
+      - /etc:/rootfs/etc:ro
+    restart: unless-stopped
+
+  grafanaDB:
+    image: influxdb:latest
+    container_name: grafanaDB
+    networks:
+      - "monitor"
+    volumes:
+      - ${CONFIGDIR}/monitor/grafanaDB:/var/lib/influxdb
+    environment:
+      - "INFLUXDB_DB=telegraf"
+      - "INFLUXDB_USER=telegraf"
+      - "INFLUXDB_PASSWORD=${GRAFANA_DB}"
+      - "INFLUXDB_ADMIN_USER=ryan"
+      - "INFLUXDB_ADMIN_PASSWORD=${GRAFANA_DB_ROOT}"
+    restart: unless-stopped
+#   traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=8086"
+      - "traefik.frontend.rule=Host:grafanadb.${DOMAINNAME}"
+      - "traefik.frontend.headers.frameDeny=false"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    networks:
+      - "frontend"
+      - "monitor"
+#    ports:
+#      - "192.168.1.2:3000:3000"
+    volumes:
+      - ${CONFIGDIR}/monitor/grafana:/var/lib/grafana
+    depends_on:
+      - grafanaDB
+    restart: unless-stopped
+#   traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=3000"
+      - "traefik.frontend.rule=Host:grafana.${DOMAINNAME}"
+      - "traefik.frontend.headers.frameDeny=false"
+
+networks:
+  frontend:
+    external:
+      name: "frontend"
+  monitor:
+    name: "monitor"

@@ -52,6 +52,9 @@ services:
       - ${STORAGEDIR}/media/transcode:/transcode
 #    ports:
 #      - 8096:8096
+#      - 8920:8920
+#      - 7359:7359
+#      - 1900:1900/udp
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
@@ -83,18 +86,6 @@ services:
       - "traefik.port=8181"
       - "traefik.frontend.rule=Host:tautulli.${DOMAINNAME}"
       - "traefik.frontend.headers.frameDeny=false"
-
-  filebot:
-    image: coppit/filebot:latest
-    container_name: filebot
-    networks:
-      - "media"
-    volumes:
-      - ${STORAGEDIR}/media/:/output
-      - ${STORAGEDIR}/media/:/media:ro
-      - ${STORAGEDIR}/media/filebot:/input
-      - ${CONFIGDIR}/media/filebot:/config
-    restart: unless-stopped
 
   radarr:
     image: linuxserver/radarr:latest
@@ -165,28 +156,6 @@ services:
       - "traefik.enable=true"
       - "traefik.port=9117"
       - "traefik.frontend.rule=Host:jackett.${DOMAINNAME}"
-      - "traefik.frontend.headers.frameDeny=false"
-
-  ombi:
-    image: linuxserver/ombi:latest
-    container_name: ombi
-    networks:
-      - "frontend"
-      - "media"
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    volumes:
-      - ${CONFIGDIR}/media/ombi:/config
-#    ports:
-#      - 3579:3579
-    restart: unless-stopped
-    #traefik
-    labels:
-      - "traefik.enable=true"
-      - "traefik.port=3579"
-      - "traefik.frontend.rule=Host:ombi.${DOMAINNAME}"
       - "traefik.frontend.headers.frameDeny=false"
 
   organizr:
