@@ -4,22 +4,22 @@ services:
     image: traefik:1.7
     container_name: traefik
     networks:
-      - "frontend"
-      - "network"
+      - frontend
+      - network
     dns:
-      - "1.1.1.1"
+      - 1.1.1.1
     domainname: ${DOMAINNAME}
     ports:
-      - "192.168.1.2:80:80"
-      - "192.168.1.2:443:443"
-#      - "192.168.1.2:8082:8080"
+      - 80:80
+      - 443:443
+#      - 8082:8080
     environment:
       - CF_API_EMAIL=${CLOUDFLARE_EMAIL}
       - CF_API_KEY=${CLOUDFLARE_API_KEY}
     labels:
-      - "traefik.enable=true"
-      - "traefik.frontend.rule=Host:traefik.${DOMAINNAME}"
-      - "traefik.port=8080"
+      - traefik.enable=true
+      - traefik.frontend.rule=Host:traefik.${DOMAINNAME}
+      - traefik.port=8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${CONFIGDIR}/network/traefik/config:/etc/traefik
@@ -28,7 +28,7 @@ services:
 
   unifi:
     image: linuxserver/unifi-controller:latest
-    container_name: "unifi"
+    container_name: unifi
     volumes:
       - ${CONFIGDIR}/network/unifi:/config
     ports:
@@ -41,49 +41,24 @@ services:
       - 8880:8880
       - 6789:6789
     networks:
-      - "frontend"
-      - "network"
+      - frontend
+      - network
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
     restart: unless-stopped
+#   traefik
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=8443"
-      - "traefik.protocol=https"
-      - "traefik.frontend.rule=Host:unifi.${DOMAINNAME}"
-      - "traefik.frontend.headers.frameDeny=false"
-
-  traefikExt:
-    image: traefik:1.7
-    container_name: traefikExt
-    networks:
-    - "ext"
-    dns:
-      - "1.1.1.1"
-    domainname: ${DOMAINNAME}
-    ports:
-      - "192.168.1.3:80:80"
-      - "192.168.1.3:443:443"
-    environment:
-      - CF_API_EMAIL=${CLOUDFLARE_EMAIL}
-      - CF_API_KEY=${CLOUDFLARE_API_KEY}
-    # labels:
-    #   - "traefik.enable=true"
-    #   - "traefik.frontend.rule=Host:traefik.${DOMAINNAME}"
-    #   - "traefik.port=8080"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${CONFIGDIR}/network/traefikExt/config:/etc/traefik
-      - ${CONFIGDIR}/network/traefikExt/tmp:/tmp
-    restart: unless-stopped
+      - traefik.enable=true
+      - traefik.port=8443
+      - traefik.protocol=https
+      - traefik.frontend.rule=Host:unifi.${DOMAINNAME}
+      - traefik.frontend.headers.frameDeny=false
 
 networks:
   frontend:
     external:
-      name: "frontend"
+      name: frontend
   network:
-    name: "network"
-  ext:
-    name: "ext"
+    name: network

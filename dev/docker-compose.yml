@@ -4,47 +4,47 @@ services:
     image: gogs/gogs:latest
     container_name: gogs
     networks:
-      - "frontend"
-      - "dev"
+      - frontend
+      - dev
 #    ports:
-#      - "10080:3000"
-#      - "10022:22"
+#      - 10080:3000
+#      - 10022:22
     volumes:
       - ${CONFIGDIR}/dev/gogs/data:/data
       - ${CONFIGDIR}/dev/gogs/backup:/backup
     depends_on:
       - gogsDB
     restart: unless-stopped
+#   traefik
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=3000"
-      - "traefik.frontend.rule=Host:gogs.${DOMAINNAME}"
-      - "traefik.frontend.headers.frameDeny=false"
+      - traefik.enable=true
+      - traefik.port=3000
+      - traefik.frontend.rule=Host:gogs.${DOMAINNAME}
+      - traefik.frontend.headers.frameDeny=false
 
   gogsDB:
     image: mysql:latest
     container_name: gogsDB
     networks:
-      - "dev"
+      - dev
     environment:
       - MYSQL_ROOT_PASSWORD=${GOGS_DB_ROOT}
       - MYSQL_DATABASE=gogs
       - MYSQL_USER=gogs
       - MYSQL_PASSWORD=${GOGS_DB}
 #    ports:
-#      - "10036:3306"
+#      - 10036:3306
     volumes:
       - ${CONFIGDIR}/dev/gogsDB/config:/etc/mysql/conf.d
       - ${CONFIGDIR}/dev/gogsDB/db:/var/lib/mysql
     restart: unless-stopped
 
-# docker run -d -v jenkins_home:/var/jenkins_home -p 8080:8080 -p 50000:50000 jenkins/jenkins:lts
   jenkins:
     image: jenkins/jenkins:lts
     container_name: jenkins
     networks:
-      - "dev"
-      - "frontend"
+      - dev
+      - frontend
     volumes:
       - ${CONFIGDIR}/dev/jenkins:/var/jenkins_home
     ports:
@@ -53,14 +53,14 @@ services:
     restart: unless-stopped
 #   traefik
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=8080"
-      - "traefik.frontend.rule=Host:jenkins.${DOMAINNAME}"
-      - "traefik.frontend.headers.frameDeny=false"
+      - traefik.enable=true
+      - traefik.port=8080
+      - traefik.frontend.rule=Host:jenkins.${DOMAINNAME}
+      - traefik.frontend.headers.frameDeny=false
 
 networks:
   frontend:
     external:
-      name: "frontend"
+      name: frontend
   dev:
-    name: "dev"
+    name: dev

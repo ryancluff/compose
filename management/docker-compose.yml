@@ -4,28 +4,28 @@ services:
     image: portainer/portainer:latest
     container_name: portainer
     networks:
-      - "frontend"
-      - "management"
+      - frontend
+      - management
 #    cap_add:
 #      - HOST_MANAGEMENT
-    ports:
-      - "9000:9000"
+#    ports:
+#      - 9000:9000
     volumes:
       - ${CONFIGDIR}/management/portainer:/data
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
 #   traefik
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=9000"
-      - "traefik.frontend.rule=Host:portainer.${DOMAINNAME}"
-      - "traefik.frontend.headers.frameDeny=false"
+      - traefik.enable=true
+      - traefik.port=9000
+      - traefik.frontend.rule=Host:portainer.${DOMAINNAME}
+      - traefik.frontend.headers.frameDeny=false
 
   watchtower:
     image: v2tec/watchtower:latest
     container_name: watchtower
     networks:
-      - "management"
+      - management
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
@@ -36,8 +36,8 @@ services:
     networks:
       - frontend
       - management
-    ports:
-      - "8088:8080"
+#    ports:
+#      - 8088:8080
     environment:
       - GUACD_HOSTNAME=guacd
       - MYSQL_HOSTNAME=guacamoleDB
@@ -47,23 +47,23 @@ services:
     restart: unless-stopped
 #   traefik
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=8080"
-      - "traefik.frontend.rule=Host:guac.${DOMAINNAME}"
-      - "traefik.frontend.headers.frameDeny=false"
+      - traefik.enable=true
+      - traefik.port=8080
+      - traefik.frontend.rule=Host:guac.${DOMAINNAME}
+      - traefik.frontend.headers.frameDeny=false
 
   guacamoleDB:
     image: mysql:latest
     container_name: guacamoleDB
     networks:
-      - "management"
+      - management
     environment:
       - MYSQL_ROOT_PASSWORD=${GUACAMOLE_DB_ROOT}
       - MYSQL_DATABASE=guacamole
       - MYSQL_USER=guacamole
       - MYSQL_PASSWORD=${GUACAMOLE_DB}
 #    ports:
-#      - "3306:3306"
+#      - 3306:3306
     volumes:
       - ${CONFIGDIR}/management/guacamoleDB/config:/etc/mysql/conf.d
       - ${CONFIGDIR}/management/guacamoleDB/db:/var/lib/mysql
@@ -80,7 +80,7 @@ services:
 networks:
   frontend:
     external:
-      name: "frontend"
+      name: frontend
   management:
-    name: "management"
+    name: management
   

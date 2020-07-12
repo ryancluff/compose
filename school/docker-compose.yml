@@ -1,37 +1,9 @@
 version: "3.7"
 services:
-  jdbclab:
-    container_name: schoolDB
-    image: mysql:latest
-    networks:
-      - school
-    volumes:
-      - ${CONFIGDIR}/school/jdbclab:/var/lib/mysql
-    ports:
-      - 3306:3306
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: p@ssword
-
-  adminer:
-    container_name: adminer
-    image: adminer:latest
-    networks:
-      - school
-      - frontend
-    restart: unless-stopped
-    # ports:
-    #   - 8085:8080
-    # traefik
-    labels:
-      - "traefik.enable=true"
-      - "traefik.port=8080"
-      - "traefik.frontend.rule=Host:adminer.${DOMAINNAME}"
-      - "traefik.frontend.headers.frameDeny=false"
     
 networks:
   frontend:
     external:
-      name: "frontend"
+      name: frontend
   school:
-    name: "school"
+    name: school

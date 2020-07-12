@@ -4,9 +4,8 @@ services:
     image: plexinc/pms-docker:latest
     container_name: plex
     networks:
-      - "frontend"
-      - "media"
-      - "ext"
+      - frontend
+      - media
 #    network_mode: host
     volumes:
       - ${CONFIGDIR}/media/plex:/config
@@ -18,87 +17,83 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     ports:
-      - "192.168.1.2:32400:32400/tcp"
-      - "192.168.1.2:3005:3005/tcp"
-      - "192.168.1.2:8324:8324/tcp"
-      - "192.168.1.2:32469:32469/tcp"
-      - "192.168.1.2:1900:1900/udp"
-      - "192.168.1.2:32410:32410/udp"
-      - "192.168.1.2:32412:32412/udp"
-      - "192.168.1.2:32413:32413/udp"
-      - "192.168.1.2:32414:32414/udp"
+      - 32400:32400/tcp
+      - 3005:3005/tcp
+      - 8324:8324/tcp
+      - 32469:32469/tcp
+      - 1900:1900/udp
+      - 32410:32410/udp
+      - 32412:32412/udp
+      - 32413:32413/udp
+      - 32414:32414/udp
     restart: unless-stopped
 #   traefik
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=32400"
-      - "traefik.frontend.rule=Host:plex.${DOMAINNAME}"
-      - "traefik.frontend.headers.frameDeny=false"
+      - traefik.enable=true
+      - traefik.port=32400
+      - traefik.frontend.rule=Host:plex.${DOMAINNAME}
+      - traefik.frontend.headers.frameDeny=false
 
   jellyfin:
-    image: linuxserver/jellyfin:latest
+    image: jellyfin/jellyfin:latest
     container_name: jellyfin
     networks:
       - frontend
       - media
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
     volumes:
-      - ${CONFIGDIR}/media/jellyfin:/config
-      - ${STORAGEDIR}/media/tvshows:/data/tvshows
-      - ${STORAGEDIR}/media/movies:/data/movies
-      - ${STORAGEDIR}/media/transcode:/transcode
-#    ports:
-#      - 8096:8096
-#      - 8920:8920
-#      - 7359:7359
-#      - 1900:1900/udp
+      - ${CONFIGDIR}/media/jellyfin/config:/config
+      - ${CONFIGDIR}/media/jellyfin/cache:/cache
+      - ${STORAGEDIR}/media/tvshows:/media/tvshows:ro
+      - ${STORAGEDIR}/media/movies:/media/movies:ro
+    ports:
+      # - 8096:8096
+      # - 8920:8920
+      - 7359:7359
+      - 1900:1900
     restart: unless-stopped
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=8096"
-      - "traefik.protocol=http"
-      - "traefik.frontend.rule=Host:jellyfin.${DOMAINNAME}"
-      - "traefik.frontend.headers.frameDeny=false"
+      - traefik.enable=true
+      - traefik.port=8096
+      - traefik.protocol=http
+      - traefik.frontend.rule=Host:jellyfin.${DOMAINNAME}
+      - traefik.frontend.headers.frameDeny=false
 
 
   tautulli:
     image: tautulli/tautulli:latest
     container_name: tautulli
     networks:
-      - "frontend"
-      - "media"
+      - frontend
+      - media
     volumes:
-      - "${CONFIGDIR}/media/tautulli:/config"
-      - "${CONFIGDIR}/media/plex/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro"
+      - ${CONFIGDIR}/media/tautulli:/config
+      - ${CONFIGDIR}/media/plex/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
-    ports:
-      - 8181:8181
+#    ports:
+#      - 8181:8181
     restart: unless-stopped
 #   traefik
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=8181"
-      - "traefik.frontend.rule=Host:tautulli.${DOMAINNAME}"
-      - "traefik.frontend.headers.frameDeny=false"
+      - traefik.enable=true
+      - traefik.port=8181
+      - traefik.frontend.rule=Host:tautulli.${DOMAINNAME}
+      - traefik.frontend.headers.frameDeny=false
 
   radarr:
     image: linuxserver/radarr:latest
-    container_name: "radarr"
+    container_name: radarr
     networks:
-      - "frontend"
-      - "media"
+      - frontend
+      - media
     volumes:
       - ${CONFIGDIR}/media/radarr:/config
       - ${STORAGEDIR}/media/movies:/movies
       - ${STORAGEDIR}/download:/downloads
 #    ports:
-#      - "7878:7878"
+#      - 7878:7878
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -106,23 +101,23 @@ services:
     restart: unless-stopped
 #   traefik
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=7878"
-      - "traefik.frontend.rule=Host:radarr.${DOMAINNAME}"
-      - "traefik.frontend.headers.frameDeny=false"
+      - traefik.enable=true
+      - traefik.port=7878
+      - traefik.frontend.rule=Host:radarr.${DOMAINNAME}
+      - traefik.frontend.headers.frameDeny=false
 
   sonarr:
     image: linuxserver/sonarr:latest
-    container_name: "sonarr"
+    container_name: sonarr
     networks:
-      - "frontend"
-      - "media"
+      - frontend
+      - media
     volumes:
       - ${CONFIGDIR}/media/sonarr:/config
       - ${STORAGEDIR}/media/tvshows:/tv
       - ${STORAGEDIR}/download:/downloads
 #    ports:
-#      - "8989:8989"
+#      - 8989:8989
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -130,17 +125,17 @@ services:
     restart: unless-stopped
 #   traefik
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=8989"
-      - "traefik.frontend.rule=Host:sonarr.${DOMAINNAME}"
-      - "traefik.frontend.headers.frameDeny=false"
+      - traefik.enable=true
+      - traefik.port=8989
+      - traefik.frontend.rule=Host:sonarr.${DOMAINNAME}
+      - traefik.frontend.headers.frameDeny=false
 
   jackett:
     image: linuxserver/jackett:latest
     container_name: jackett
     networks:
-      - "frontend"
-      - "media"
+      - frontend
+      - media
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -153,19 +148,19 @@ services:
     restart: unless-stopped
     #traefik
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=9117"
-      - "traefik.frontend.rule=Host:jackett.${DOMAINNAME}"
-      - "traefik.frontend.headers.frameDeny=false"
+      - traefik.enable=true
+      - traefik.port=9117
+      - traefik.frontend.rule=Host:jackett.${DOMAINNAME}
+      - traefik.frontend.headers.frameDeny=false
 
   organizr:
     image: lsiocommunity/organizr:latest
     container_name: organizr
     networks:
-      - "frontend"
-      - "media"
+      - frontend
+      - media
 #    ports:
-#      - "80:80"
+#      - 80:80
     volumes:
       - ${CONFIGDIR}/media/organizr:/config
     environment:
@@ -174,17 +169,14 @@ services:
     restart: unless-stopped
 #   traefik
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=80"
-      - "traefik.frontend.rule=Host:organizr.${DOMAINNAME}"
-      - "traefik.frontend.headers.frameDeny=false"
+      - traefik.enable=true
+      - traefik.port=80
+      - traefik.frontend.rule=Host:organizr.${DOMAINNAME}
+      - traefik.frontend.headers.frameDeny=false
 
 networks:
   frontend:
     external:
-      name: "frontend"
-  ext:
-    external:
-      name: "ext"
+      name: frontend
   media:
-    name: "media"
+    name: media

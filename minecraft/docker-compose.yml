@@ -4,10 +4,10 @@ services:
     image: itzg/minecraft-server
     container_name: mc
     networks:
-      - "frontend"
-      - "minecraft"
+      - frontend
+      - minecraft
     ports:
-      - "25565:25565"
+      - 25565:25565
     environment:
       - EULA=TRUE
       - VERSION=1.14.4
@@ -23,10 +23,10 @@ services:
     image: itzg/minecraft-bedrock-server
     container_name: bedrock
     networks:
-      - "frontend"
-      - "minecraft"
+      - frontend
+      - minecraft
     ports:
-      - "19132:19132"
+      - 19132:19132
     environment:
       - SERVER_NAME=TheCommune
       - DIFFICULTY=normal
@@ -38,6 +38,6 @@ services:
 networks:
   frontend:
     external:
-      name: "frontend"
+      name: frontend
   minecraft:
-    name: "minecraft"
+    name: minecraft

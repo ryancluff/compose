@@ -4,7 +4,7 @@ services:
     image: telegraf
     container_name: telegraf
     networks:
-      - "monitor"
+      - monitor
     environment:
       - HOST_PROC=/rootfs/proc
       - HOST_SYS=/rootfs/sys
@@ -21,31 +21,31 @@ services:
     image: influxdb:latest
     container_name: grafanaDB
     networks:
-      - "monitor"
+      - monitor
     volumes:
       - ${CONFIGDIR}/monitor/grafanaDB:/var/lib/influxdb
     environment:
-      - "INFLUXDB_DB=telegraf"
-      - "INFLUXDB_USER=telegraf"
-      - "INFLUXDB_PASSWORD=${GRAFANA_DB}"
-      - "INFLUXDB_ADMIN_USER=ryan"
-      - "INFLUXDB_ADMIN_PASSWORD=${GRAFANA_DB_ROOT}"
+      - INFLUXDB_DB=telegraf
+      - INFLUXDB_USER=telegraf
+      - INFLUXDB_PASSWORD=${GRAFANA_DB}
+      - INFLUXDB_ADMIN_USER=ryan
+      - INFLUXDB_ADMIN_PASSWORD=${GRAFANA_DB_ROOT}
     restart: unless-stopped
 #   traefik
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=8086"
-      - "traefik.frontend.rule=Host:grafanadb.${DOMAINNAME}"
-      - "traefik.frontend.headers.frameDeny=false"
+      - traefik.enable=true
+      - traefik.port=8086
+      - traefik.frontend.rule=Host:grafanadb.${DOMAINNAME}
+      - traefik.frontend.headers.frameDeny=false
 
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
     networks:
-      - "frontend"
-      - "monitor"
+      - frontend
+      - monitor
 #    ports:
-#      - "192.168.1.2:3000:3000"
+#      - 3000:3000
     volumes:
       - ${CONFIGDIR}/monitor/grafana:/var/lib/grafana
     depends_on:
@@ -53,14 +53,14 @@ services:
     restart: unless-stopped
 #   traefik
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=3000"
-      - "traefik.frontend.rule=Host:grafana.${DOMAINNAME}"
-      - "traefik.frontend.headers.frameDeny=false"
+      - traefik.enable=true
+      - traefik.port=3000
+      - traefik.frontend.rule=Host:grafana.${DOMAINNAME}
+      - traefik.frontend.headers.frameDeny=false
 
 networks:
   frontend:
     external:
-      name: "frontend"
+      name: frontend
   monitor:
-    name: "monitor"
+    name: monitor

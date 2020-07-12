@@ -4,14 +4,13 @@ services:
     image: linuxserver/nextcloud:latest
     container_name: nextcloud
     networks:
-      - "frontend"
-      - "cloud"
-      - "ext"
+      - frontend
+      - cloud
     volumes:
       - ${CONFIGDIR}/cloud/nextcloud/config:/config
       - ${CONFIGDIR}/cloud/nextcloud/data:/data
 #    ports:
-#      - "443:443"
+#      - 443:443
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -21,17 +20,17 @@ services:
     restart: unless-stopped
 #   traefik
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=443"
-      - "traefik.frontend.rule=Host:nextcloud.${DOMAINNAME}"
-      - "traefik.protocol=https"
-      - "traefik.frontend.headers.frameDeny=false"
+      - traefik.enable=true
+      - traefik.port=443
+      - traefik.frontend.rule=Host:nextcloud.${DOMAINNAME}
+      - traefik.protocol=https
+      - traefik.frontend.headers.frameDeny=false
 
   nextcloudDB:
     image: linuxserver/mariadb:latest
     container_name: nextcloudDB
     networks:
-      - "cloud"
+      - cloud
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -43,16 +42,15 @@ services:
     volumes:
       - ${CONFIGDIR}/cloud/nextcloudDB:/config
 #    ports:
-#      - 192.168.1.2:3306:3306
+#      - 3306:3306
     restart: unless-stopped
 
   bitwarden:
     image: bitwardenrs/server:latest
     container_name: bitwarden
     networks:
-      - "frontend"
-      - "cloud"
-      - "ext"
+      - frontend
+      - cloud
 #    ports:
 #      - 80:80
 #      - 3012:3012
@@ -62,17 +60,14 @@ services:
       - SINGUPS_ALLOWED=true
     restart: unless-stopped
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=80"
-      - "traefik.frontend.rule=Host:bitwarden.${DOMAINNAME}"
-      - "traefik.frontend.headers.frameDeny=false"
+      - traefik.enable=true
+      - traefik.port=80
+      - traefik.frontend.rule=Host:bitwarden.${DOMAINNAME}
+      - traefik.frontend.headers.frameDeny=false
 
 networks:
   frontend:
     external:
-      name: "frontend"
-  ext:
-    external:
-      name: "ext"
+      name: frontend
   cloud:
-    name: "cloud"
+    name: cloud
