@@ -10,7 +10,6 @@ services:
       - 25565:25565
     environment:
       - EULA=TRUE
-      - VERSION=1.14.4
       - OPS=ryancluff
       - MEMORY=4G
     volumes:
@@ -26,7 +25,7 @@ services:
       - frontend
       - minecraft
     ports:
-      - 19132:19132
+      - 19132:19132/udp
     environment:
       - SERVER_NAME=TheCommune
       - DIFFICULTY=normal

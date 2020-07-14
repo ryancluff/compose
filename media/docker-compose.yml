@@ -43,8 +43,7 @@ services:
     volumes:
       - ${CONFIGDIR}/media/jellyfin/config:/config
       - ${CONFIGDIR}/media/jellyfin/cache:/cache
-      - ${STORAGEDIR}/media/tvshows:/media/tvshows:ro
-      - ${STORAGEDIR}/media/movies:/media/movies:ro
+      - ${STORAGEDIR}/media:/media:ro
     ports:
       # - 8096:8096
       # - 8920:8920
@@ -57,7 +56,6 @@ services:
       - traefik.protocol=http
       - traefik.frontend.rule=Host:jellyfin.${DOMAINNAME}
       - traefik.frontend.headers.frameDeny=false
-
 
   tautulli:
     image: tautulli/tautulli:latest
