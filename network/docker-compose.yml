@@ -4,15 +4,12 @@ services:
     image: traefik:1.7
     container_name: traefik
     networks:
-      - frontend
-      - network
-    dns:
-      - 1.1.1.1
+      - int
     domainname: ${DOMAINNAME}
     ports:
-      - 80:80
-      - 443:443
-#      - 8082:8080
+      - ${INT}:80:80
+      - ${INT}:443:443
+#      - ${INT}:8082:8080
     environment:
       - CF_API_EMAIL=${CLOUDFLARE_EMAIL}
       - CF_API_KEY=${CLOUDFLARE_API_KEY}
@@ -26,23 +23,45 @@ services:
       - ${CONFIGDIR}/network/traefik/tmp:/tmp
     restart: unless-stopped
 
+  traefikExt:
+    image: traefik:1.7
+    container_name: traefikExt
+    networks:
+      - ext
+    domainname: ${DOMAINNAME}
+    ports:
+      - ${EXT}:80:80
+      - ${EXT}:443:443
+#      - ${INT}:8082:8080
+    environment:
+      - CF_API_EMAIL=${CLOUDFLARE_EMAIL}
+      - CF_API_KEY=${CLOUDFLARE_API_KEY}
+    labels:
+      - traefik.enable=true
+      - traefik.frontend.rule=Host:traefikExt.${DOMAINNAME}
+      - traefik.port=8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${CONFIGDIR}/network/traefikExt/config:/etc/traefik
+      - ${CONFIGDIR}/network/traefikExt/tmp:/tmp
+    restart: unless-stopped
+
   unifi:
     image: linuxserver/unifi-controller:latest
     container_name: unifi
     volumes:
       - ${CONFIGDIR}/network/unifi:/config
     ports:
-      - 3478:3478/udp
-      - 10001:10001/udp
-      - 8080:8080
-      - 8081:8081
-      - 8443:8443
-      - 8843:8843
-      - 8880:8880
-      - 6789:6789
+      - ${INT}:3478:3478/udp
+      - ${INT}:10001:10001/udp
+      - ${INT}:8080:8080
+      - ${INT}:8081:8081
+      - ${INT}:8443:8443
+      - ${INT}:8843:8843
+      - ${INT}:8880:8880
+      - ${INT}:6789:6789
     networks:
-      - frontend
-      - network
+      - int
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -57,8 +76,9 @@ services:
       - traefik.frontend.headers.frameDeny=false
 
 networks:
-  frontend:
+  int:
     external:
-      name: frontend
-  network:
-    name: network
+      name: int
+  ext:
+    external:
+      name: ext

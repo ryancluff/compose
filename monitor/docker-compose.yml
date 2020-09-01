@@ -42,10 +42,10 @@ services:
     image: grafana/grafana:latest
     container_name: grafana
     networks:
-      - frontend
+      - int
       - monitor
 #    ports:
-#      - 3000:3000
+#      - ${INT}:3000:3000
     volumes:
       - ${CONFIGDIR}/monitor/grafana:/var/lib/grafana
     depends_on:
@@ -59,8 +59,11 @@ services:
       - traefik.frontend.headers.frameDeny=false
 
 networks:
-  frontend:
+  int:
     external:
-      name: frontend
+      name: int
+  ext:
+    external:
+      name: ext
   monitor:
     name: monitor

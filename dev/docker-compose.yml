@@ -4,11 +4,11 @@ services:
     image: gogs/gogs:latest
     container_name: gogs
     networks:
-      - frontend
+      - int
       - dev
 #    ports:
-#      - 10080:3000
-#      - 10022:22
+#      - ${INT}:10080:3000
+#      - ${INT}:10022:22
     volumes:
       - ${CONFIGDIR}/dev/gogs/data:/data
       - ${CONFIGDIR}/dev/gogs/backup:/backup
@@ -33,34 +33,37 @@ services:
       - MYSQL_USER=gogs
       - MYSQL_PASSWORD=${GOGS_DB}
 #    ports:
-#      - 10036:3306
+#      - ${INT}:10036:3306
     volumes:
       - ${CONFIGDIR}/dev/gogsDB/config:/etc/mysql/conf.d
       - ${CONFIGDIR}/dev/gogsDB/db:/var/lib/mysql
     restart: unless-stopped
 
-  jenkins:
-    image: jenkins/jenkins:lts
-    container_name: jenkins
-    networks:
-      - dev
-      - frontend
-    volumes:
-      - ${CONFIGDIR}/dev/jenkins:/var/jenkins_home
-    ports:
-      - 8083:8080
-      - 50000:50000
-    restart: unless-stopped
-#   traefik
-    labels:
-      - traefik.enable=true
-      - traefik.port=8080
-      - traefik.frontend.rule=Host:jenkins.${DOMAINNAME}
-      - traefik.frontend.headers.frameDeny=false
+#   jenkins:
+#     image: jenkins/jenkins:lts
+#     container_name: jenkins
+#     networks:
+#       - dev
+#       - int
+#     volumes:
+#       - ${CONFIGDIR}/dev/jenkins:/var/jenkins_home
+# #    ports:
+# #      - ${INT}:8083:8080
+# #      - ${INT}:50000:50000
+#     restart: unless-stopped
+# #   traefik
+#     labels:
+#       - traefik.enable=true
+#       - traefik.port=8080
+#       - traefik.frontend.rule=Host:jenkins.${DOMAINNAME}
+#       - traefik.frontend.headers.frameDeny=false
 
 networks:
-  frontend:
+  int:
     external:
-      name: frontend
+      name: int
+  ext:
+    external:
+      name: ext
   dev:
     name: dev

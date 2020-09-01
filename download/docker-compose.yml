@@ -4,23 +4,20 @@ services:
     image: colinhebert/pia-openvpn:latest
     container_name: vpn
     networks:
-      - frontend
+      - int
       - media
-    dns:
-      - 209.222.18.222 
-      - 209.222.18.218
     cap_add:
       - net_admin
     ports:
-     - 6881:6881
-     - 6881:6881/udp
+     - ${INT}:6881:6881
+     - ${INT}:6881:6881/udp
     devices:
       - /dev/net/tun:/dev/net/tun
     environment:
 #      - REGION=Finland
 #      - REGION=Sweden
-#      - REGION=US East
-      - REGION=US West
+      - REGION=US East
+#      - REGION=US West
       - USERNAME=${PIA_USER}
       - PASSWORD=${PIA_PASS}
     restart: unless-stopped
@@ -38,9 +35,9 @@ services:
       - ${CONFIGDIR}/download/qbittorrent:/config
       - ${STORAGEDIR}/download:/downloads
 #    ports:
-#      - 8080:8080
-#      - 6881:6881
-#      - 6881:6881/udp
+#      - ${INT}:8080:8080
+#      - ${INT}:6881:6881
+#      - ${INT}:6881:6881/udp
     depends_on: 
       - vpn
     network_mode: service:vpn
@@ -52,10 +49,32 @@ services:
       - traefik.frontend.rule=Host:qbittorrent.${DOMAINNAME}
       - traefik.frontend.headers.frameDeny=false
 
+  # wireguard:
+  #   image: linuxserver/wireguard
+  #   container_name: wireguard
+  #   cap_add:
+  #     - NET_ADMIN
+  #     - SYS_MODULE
+  #   environment:
+  #     - PUID=${PUID}
+  #     - PGID=${PGID}
+  #     - TZ=${TZ}
+  #   volumes:
+  #     - ${CONFIGDIR}/download/wireguard:/config
+  #     - /lib/modules:/lib/modules
+  #   ports:
+  #     - 51820:51820/udp
+  #   sysctls:
+  #     - net.ipv4.conf.all.src_valid_mark=1
+  #   restart: unless-stopped
+
 networks:
-  frontend:
+  int:
     external:
-      name: frontend
+      name: int
+  ext:
+    external:
+      name: ext
   media:
     external:
       name: media

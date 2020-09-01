@@ -4,10 +4,10 @@ services:
     image: itzg/minecraft-server
     container_name: mc
     networks:
-      - frontend
       - minecraft
     ports:
-      - 25565:25565
+      - ${INT}:25565:25565
+      - ${EXT}:25565:25565
     environment:
       - EULA=TRUE
       - OPS=ryancluff
@@ -22,10 +22,10 @@ services:
     image: itzg/minecraft-bedrock-server
     container_name: bedrock
     networks:
-      - frontend
       - minecraft
     ports:
-      - 19132:19132/udp
+      - ${INT}:19132:19132/udp
+      - ${EXT}:19132:19132/udp
     environment:
       - SERVER_NAME=TheCommune
       - DIFFICULTY=normal
@@ -35,8 +35,11 @@ services:
     restart: unless-stopped
 
 networks:
-  frontend:
+  int:
     external:
-      name: frontend
+      name: int
+  ext:
+    external:
+      name: ext
   minecraft:
     name: minecraft

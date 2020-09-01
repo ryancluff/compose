@@ -4,12 +4,12 @@ services:
     image: portainer/portainer:latest
     container_name: portainer
     networks:
-      - frontend
+      - int
       - management
 #    cap_add:
 #      - HOST_MANAGEMENT
 #    ports:
-#      - 9000:9000
+#      - ${INT}:9000:9000
     volumes:
       - ${CONFIGDIR}/management/portainer:/data
       - /var/run/docker.sock:/var/run/docker.sock
@@ -34,10 +34,10 @@ services:
     image: guacamole/guacamole
     container_name: guacamole
     networks:
-      - frontend
+      - int
       - management
 #    ports:
-#      - 8088:8080
+#      - ${INT}:8088:8080
     environment:
       - GUACD_HOSTNAME=guacd
       - MYSQL_HOSTNAME=guacamoleDB
@@ -63,7 +63,7 @@ services:
       - MYSQL_USER=guacamole
       - MYSQL_PASSWORD=${GUACAMOLE_DB}
 #    ports:
-#      - 3306:3306
+#      - ${INT}:3306:3306
     volumes:
       - ${CONFIGDIR}/management/guacamoleDB/config:/etc/mysql/conf.d
       - ${CONFIGDIR}/management/guacamoleDB/db:/var/lib/mysql
@@ -78,9 +78,12 @@ services:
     restart: unless-stopped
 
 networks:
-  frontend:
+  int:
     external:
-      name: frontend
+      name: int
+  ext:
+    external:
+      name: ext
   management:
     name: management
   

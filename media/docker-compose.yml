@@ -4,28 +4,29 @@ services:
     image: plexinc/pms-docker:latest
     container_name: plex
     networks:
-      - frontend
+      - int
+      - ext
       - media
 #    network_mode: host
     volumes:
-      - ${CONFIGDIR}/media/plex:/config
+      - ${CONFIGDIR}/media/plex/config:/config
       - ${STORAGEDIR}/media/tvshows:/data/tvshows
       - ${STORAGEDIR}/media/movies:/data/movies
-      - ${STORAGEDIR}/media/transcode:/transcode
+      - ${CONFIGDIR}/media/plex/transcode:/transcode
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
     ports:
-      - 32400:32400/tcp
-      - 3005:3005/tcp
-      - 8324:8324/tcp
-      - 32469:32469/tcp
-      - 1900:1900/udp
-      - 32410:32410/udp
-      - 32412:32412/udp
-      - 32413:32413/udp
-      - 32414:32414/udp
+      - ${INT}:32400:32400/tcp
+      - ${INT}:3005:3005/tcp
+      - ${INT}:8324:8324/tcp
+      - ${INT}:32469:32469/tcp
+      - ${INT}:1900:1900/udp
+      - ${INT}:32410:32410/udp
+      - ${INT}:32412:32412/udp
+      - ${INT}:32413:32413/udp
+      - ${INT}:32414:32414/udp
     restart: unless-stopped
 #   traefik
     labels:
@@ -38,22 +39,21 @@ services:
     image: jellyfin/jellyfin:latest
     container_name: jellyfin
     networks:
-      - frontend
+      - int
       - media
     volumes:
       - ${CONFIGDIR}/media/jellyfin/config:/config
       - ${CONFIGDIR}/media/jellyfin/cache:/cache
       - ${STORAGEDIR}/media:/media:ro
     ports:
-      # - 8096:8096
-      # - 8920:8920
-      - 7359:7359
-      - 1900:1900
+      # - ${INT}:8096:8096
+      # - ${INT}:8920:8920
+      - ${INT}:7359:7359
+      - ${INT}:1900:1900
     restart: unless-stopped
     labels:
       - traefik.enable=true
       - traefik.port=8096
-      - traefik.protocol=http
       - traefik.frontend.rule=Host:jellyfin.${DOMAINNAME}
       - traefik.frontend.headers.frameDeny=false
 
@@ -61,7 +61,7 @@ services:
     image: tautulli/tautulli:latest
     container_name: tautulli
     networks:
-      - frontend
+      - int
       - media
     volumes:
       - ${CONFIGDIR}/media/tautulli:/config
@@ -71,7 +71,7 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
 #    ports:
-#      - 8181:8181
+#      - ${INT}:8181:8181
     restart: unless-stopped
 #   traefik
     labels:
@@ -84,14 +84,14 @@ services:
     image: linuxserver/radarr:latest
     container_name: radarr
     networks:
-      - frontend
+      - int
       - media
     volumes:
       - ${CONFIGDIR}/media/radarr:/config
       - ${STORAGEDIR}/media/movies:/movies
       - ${STORAGEDIR}/download:/downloads
 #    ports:
-#      - 7878:7878
+#      - ${INT}:7878:7878
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -108,14 +108,14 @@ services:
     image: linuxserver/sonarr:latest
     container_name: sonarr
     networks:
-      - frontend
+      - int
       - media
     volumes:
       - ${CONFIGDIR}/media/sonarr:/config
       - ${STORAGEDIR}/media/tvshows:/tv
       - ${STORAGEDIR}/download:/downloads
 #    ports:
-#      - 8989:8989
+#      - ${INT}:8989:8989
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -132,7 +132,7 @@ services:
     image: linuxserver/jackett:latest
     container_name: jackett
     networks:
-      - frontend
+      - int
       - media
     environment:
       - PUID=${PUID}
@@ -142,7 +142,7 @@ services:
       - ${CONFIGDIR}/media/jackett:/config
       - ${STORAGEDIR}/download:/downloads
 #    ports:
-#      - 9117:9117
+#      - ${INT}:9117:9117
     restart: unless-stopped
     #traefik
     labels:
@@ -155,10 +155,10 @@ services:
     image: lsiocommunity/organizr:latest
     container_name: organizr
     networks:
-      - frontend
+      - int
       - media
 #    ports:
-#      - 80:80
+#      - ${INT}:80:80
     volumes:
       - ${CONFIGDIR}/media/organizr:/config
     environment:
@@ -173,8 +173,11 @@ services:
       - traefik.frontend.headers.frameDeny=false
 
 networks:
-  frontend:
+  int:
     external:
-      name: frontend
+      name: int
+  ext:
+    external:
+      name: ext
   media:
     name: media
