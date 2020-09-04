@@ -7,9 +7,9 @@ services:
       - int
     domainname: ${DOMAINNAME}
     ports:
-      - ${INT}:80:80
-      - ${INT}:443:443
-#      - ${INT}:8082:8080
+      - 80:80
+      - 443:443
+#      - 8082:8080
     environment:
       - CF_API_EMAIL=${CLOUDFLARE_EMAIL}
       - CF_API_KEY=${CLOUDFLARE_API_KEY}
@@ -30,9 +30,9 @@ services:
       - ext
     domainname: ${DOMAINNAME}
     ports:
-      - ${EXT}:80:80
-      - ${EXT}:443:443
-#      - ${INT}:8082:8080
+      - 81:80
+      - 444:443
+#      - 8082:8080
     environment:
       - CF_API_EMAIL=${CLOUDFLARE_EMAIL}
       - CF_API_KEY=${CLOUDFLARE_API_KEY}
@@ -52,14 +52,14 @@ services:
     volumes:
       - ${CONFIGDIR}/network/unifi:/config
     ports:
-      - ${INT}:3478:3478/udp
-      - ${INT}:10001:10001/udp
-      - ${INT}:8080:8080
-      - ${INT}:8081:8081
-      - ${INT}:8443:8443
-      - ${INT}:8843:8843
-      - ${INT}:8880:8880
-      - ${INT}:6789:6789
+      - 3478:3478/udp
+      - 10001:10001/udp
+      - 8080:8080
+      - 8081:8081
+      - 8443:8443
+      - 8843:8843
+      - 8880:8880
+      - 6789:6789
     networks:
       - int
     environment:

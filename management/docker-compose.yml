@@ -9,7 +9,7 @@ services:
 #    cap_add:
 #      - HOST_MANAGEMENT
 #    ports:
-#      - ${INT}:9000:9000
+#      - 9000:9000
     volumes:
       - ${CONFIGDIR}/management/portainer:/data
       - /var/run/docker.sock:/var/run/docker.sock
@@ -37,7 +37,7 @@ services:
       - int
       - management
 #    ports:
-#      - ${INT}:8088:8080
+#      - 8088:8080
     environment:
       - GUACD_HOSTNAME=guacd
       - MYSQL_HOSTNAME=guacamoleDB
@@ -63,7 +63,7 @@ services:
       - MYSQL_USER=guacamole
       - MYSQL_PASSWORD=${GUACAMOLE_DB}
 #    ports:
-#      - ${INT}:3306:3306
+#      - 3306:3306
     volumes:
       - ${CONFIGDIR}/management/guacamoleDB/config:/etc/mysql/conf.d
       - ${CONFIGDIR}/management/guacamoleDB/db:/var/lib/mysql

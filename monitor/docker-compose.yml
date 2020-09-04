@@ -45,7 +45,7 @@ services:
       - int
       - monitor
 #    ports:
-#      - ${INT}:3000:3000
+#      - 3000:3000
     volumes:
       - ${CONFIGDIR}/monitor/grafana:/var/lib/grafana
     depends_on:

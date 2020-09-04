@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   plex:
-    image: plexinc/pms-docker:latest
+    image: linuxserver/plex:latest
     container_name: plex
     networks:
       - int
@@ -17,16 +17,18 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
+      - VERSION=docker
     ports:
-      - ${INT}:32400:32400/tcp
-      - ${INT}:3005:3005/tcp
-      - ${INT}:8324:8324/tcp
-      - ${INT}:32469:32469/tcp
-      - ${INT}:1900:1900/udp
-      - ${INT}:32410:32410/udp
-      - ${INT}:32412:32412/udp
-      - ${INT}:32413:32413/udp
-      - ${INT}:32414:32414/udp
+      - 32400:32400/tcp
+      - 5353:5353/udp
+      - 3005:3005/tcp
+      - 8324:8324/tcp
+      - 32469:32469/tcp
+      - 1900:1900/udp
+      - 32410:32410/udp
+      - 32412:32412/udp
+      - 32413:32413/udp
+      - 32414:32414/udp
     restart: unless-stopped
 #   traefik
     labels:
@@ -46,10 +48,10 @@ services:
       - ${CONFIGDIR}/media/jellyfin/cache:/cache
       - ${STORAGEDIR}/media:/media:ro
     ports:
-      # - ${INT}:8096:8096
-      # - ${INT}:8920:8920
-      - ${INT}:7359:7359
-      - ${INT}:1900:1900
+      # - 8096:8096
+      # - 8920:8920
+      - 7359:7359
+      - 1900:1900
     restart: unless-stopped
     labels:
       - traefik.enable=true
@@ -71,7 +73,7 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
 #    ports:
-#      - ${INT}:8181:8181
+#      - 8181:8181
     restart: unless-stopped
 #   traefik
     labels:
@@ -91,7 +93,7 @@ services:
       - ${STORAGEDIR}/media/movies:/movies
       - ${STORAGEDIR}/download:/downloads
 #    ports:
-#      - ${INT}:7878:7878
+#      - 7878:7878
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -115,7 +117,7 @@ services:
       - ${STORAGEDIR}/media/tvshows:/tv
       - ${STORAGEDIR}/download:/downloads
 #    ports:
-#      - ${INT}:8989:8989
+#      - 8989:8989
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -142,7 +144,7 @@ services:
       - ${CONFIGDIR}/media/jackett:/config
       - ${STORAGEDIR}/download:/downloads
 #    ports:
-#      - ${INT}:9117:9117
+#      - 9117:9117
     restart: unless-stopped
     #traefik
     labels:
@@ -158,7 +160,7 @@ services:
       - int
       - media
 #    ports:
-#      - ${INT}:80:80
+#      - 80:80
     volumes:
       - ${CONFIGDIR}/media/organizr:/config
     environment:

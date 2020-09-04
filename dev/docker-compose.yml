@@ -7,8 +7,8 @@ services:
       - int
       - dev
 #    ports:
-#      - ${INT}:10080:3000
-#      - ${INT}:10022:22
+#      - 10080:3000
+#      - 10022:22
     volumes:
       - ${CONFIGDIR}/dev/gogs/data:/data
       - ${CONFIGDIR}/dev/gogs/backup:/backup
@@ -33,7 +33,7 @@ services:
       - MYSQL_USER=gogs
       - MYSQL_PASSWORD=${GOGS_DB}
 #    ports:
-#      - ${INT}:10036:3306
+#      - 10036:3306
     volumes:
       - ${CONFIGDIR}/dev/gogsDB/config:/etc/mysql/conf.d
       - ${CONFIGDIR}/dev/gogsDB/db:/var/lib/mysql
@@ -48,8 +48,8 @@ services:
 #     volumes:
 #       - ${CONFIGDIR}/dev/jenkins:/var/jenkins_home
 # #    ports:
-# #      - ${INT}:8083:8080
-# #      - ${INT}:50000:50000
+# #      - 8083:8080
+# #      - 50000:50000
 #     restart: unless-stopped
 # #   traefik
 #     labels:

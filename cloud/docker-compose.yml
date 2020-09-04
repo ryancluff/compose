@@ -10,7 +10,7 @@ services:
       - ${CONFIGDIR}/cloud/nextcloud/config:/config
       - ${CONFIGDIR}/cloud/nextcloud/data:/data
 #    ports:
-#      - ${INT}:443:443
+#      - 443:443
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -42,7 +42,7 @@ services:
     volumes:
       - ${CONFIGDIR}/cloud/nextcloudDB:/config
 #    ports:
-#      - ${INT}:3306:3306
+#      - 3306:3306
     restart: unless-stopped
 
   bitwarden:
@@ -52,8 +52,8 @@ services:
       - int
       - cloud
 #    ports:
-#      - ${INT}:80:80
-#      - ${INT}:3012:3012
+#      - 80:80
+#      - 3012:3012
     volumes:
       - ${CONFIGDIR}/cloud/bitwarden:/data
     environment:
