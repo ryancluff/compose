@@ -72,9 +72,6 @@ networks:
   int:
     external:
       name: int
-  ext:
-    external:
-      name: ext
   media:
     external:
       name: media

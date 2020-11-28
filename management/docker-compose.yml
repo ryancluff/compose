@@ -81,9 +81,6 @@ networks:
   int:
     external:
       name: int
-  ext:
-    external:
-      name: ext
   management:
     name: management
   

@@ -69,8 +69,5 @@ networks:
   int:
     external:
       name: int
-  ext:
-    external:
-      name: ext
   cloud:
     name: cloud

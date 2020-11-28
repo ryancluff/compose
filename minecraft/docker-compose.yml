@@ -54,8 +54,5 @@ networks:
   int:
     external:
       name: int
-  ext:
-    external:
-      name: ext
   minecraft:
     name: minecraft
