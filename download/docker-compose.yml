@@ -15,8 +15,8 @@ services:
       - /dev/net/tun:/dev/net/tun
     environment:
 #      - REGION=Finland
-#      - REGION=Sweden
-      - REGION=US East
+      - REGION=Sweden
+#      - REGION=US East
 #      - REGION=US West
       - USERNAME=${PIA_USER}
       - PASSWORD=${PIA_PASS}
