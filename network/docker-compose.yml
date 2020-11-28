@@ -23,29 +23,6 @@ services:
       - ${CONFIGDIR}/network/traefik/tmp:/tmp
     restart: unless-stopped
 
-#   traefikExt:
-#     image: traefik:1.7
-#     container_name: traefikExt
-#     networks:
-#       - ext
-#     domainname: ${DOMAINNAME}
-#     ports:
-#       - 81:80
-#       - 444:443
-# #      - 8082:8080
-#     environment:
-#       - CF_API_EMAIL=${CLOUDFLARE_EMAIL}
-#       - CF_API_KEY=${CLOUDFLARE_API_KEY}
-#     labels:
-#       - traefik.enable=true
-#       - traefik.frontend.rule=Host:traefikExt.${DOMAINNAME}
-#       - traefik.port=8080
-#     volumes:
-#       - /var/run/docker.sock:/var/run/docker.sock:ro
-#       - ${CONFIGDIR}/network/traefikExt/config:/etc/traefik
-#       - ${CONFIGDIR}/network/traefikExt/tmp:/tmp
-#     restart: unless-stopped
-
   unifi:
     image: linuxserver/unifi-controller:latest
     container_name: unifi

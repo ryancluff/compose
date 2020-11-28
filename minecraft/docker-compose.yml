@@ -51,8 +51,5 @@ services:
     restart: unless-stopped
 
 networks:
-  int:
-    external:
-      name: int
   minecraft:
     name: minecraft
