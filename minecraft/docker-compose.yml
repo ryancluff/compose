@@ -1,25 +1,24 @@
 version: "3.7"
 services:
-  minecraft-java:
-    image: itzg/minecraft-server
-    container_name: mc
-    networks:
-      - minecraft
-    ports:
-      - 25565:25565
-    environment:
-      - EULA=TRUE
-      - OPS=ryancluff
-      - MEMORY=4G
-    volumes:
-      - ${CONFIGDIR}/minecraft/standard/data:/data
-      - ${CONFIGDIR}/minecraft/standard/config:/config
-      - ${CONFIGDIR}/minecraft/standard/mods:/mods
-    restart: unless-stopped
+  # minecraft-java:
+  #   image: itzg/minecraft-server
+  #   container_name: mc
+  #   networks:
+  #     - minecraft
+  #   ports:
+  #     - 25565:25565
+  #   environment:
+  #     - EULA=TRUE
+  #     - MEMORY=4G
+  #   volumes:
+  #     - ${CONFIGDIR}/minecraft/standard/data:/data
+  #     - ${CONFIGDIR}/minecraft/standard/config:/config
+  #     - ${CONFIGDIR}/minecraft/standard/mods:/mods
+  #   restart: unless-stopped
 
   minecraft-bedrock:
     image: itzg/minecraft-bedrock-server
-    container_name: bedrock
+    container_name: minecraft-bedrock
     networks:
       - minecraft
     ports:
@@ -30,6 +29,25 @@ services:
       - EULA=TRUE
     volumes:
       - ${CONFIGDIR}/minecraft/bedrock/data:/data
+    restart: unless-stopped
+
+  minecraft-ftb-revelation:
+    image: itzg/minecraft-server:multiarch
+    container_name: minecraft-revelation
+    networks:
+      - minecraft
+    ports:
+      - 25565:25565
+    environment:
+      - TZ=${TZ}
+      - EULA=TRUE
+      - MEMORY=8G
+      - TYPE=FTBA
+      - FTB_MODPACK_ID=35
+    volumes:
+      - ${CONFIGDIR}/minecraft/revelation/data:/data
+      - ${CONFIGDIR}/minecraft/revelation/config:/config
+      - ${CONFIGDIR}/minecraft/revelation/mods:/mods
     restart: unless-stopped
 
 networks:
