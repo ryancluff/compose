@@ -21,14 +21,14 @@ services:
       - traefik.frontend.rule=Host:portainer.${DOMAINNAME}
       - traefik.frontend.headers.frameDeny=false
 
-  watchtower:
-    image: v2tec/watchtower:latest
-    container_name: watchtower
-    networks:
-      - management
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    restart: unless-stopped
+  # watchtower:
+  #   image: v2tec/watchtower:latest
+  #   container_name: watchtower
+  #   networks:
+  #     - management
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   restart: unless-stopped
 
   guacamole:
     image: guacamole/guacamole
