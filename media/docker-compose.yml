@@ -5,7 +5,6 @@ services:
     container_name: plex
     networks:
       - int
-      - ext
       - media
 #    network_mode: host
     volumes:
@@ -82,76 +81,76 @@ services:
       - traefik.frontend.rule=Host:tautulli.${DOMAINNAME}
       - traefik.frontend.headers.frameDeny=false
 
-  radarr:
-    image: linuxserver/radarr:latest
-    container_name: radarr
-    networks:
-      - int
-      - media
-    volumes:
-      - ${CONFIGDIR}/media/radarr:/config
-      - ${STORAGEDIR}/media/movies:/movies
-      - ${STORAGEDIR}/download:/downloads
-#    ports:
-#      - 7878:7878
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    restart: unless-stopped
-#   traefik
-    labels:
-      - traefik.enable=true
-      - traefik.port=7878
-      - traefik.frontend.rule=Host:radarr.${DOMAINNAME}
-      - traefik.frontend.headers.frameDeny=false
+#   radarr:
+#     image: linuxserver/radarr:latest
+#     container_name: radarr
+#     networks:
+#       - int
+#       - media
+#     volumes:
+#       - ${CONFIGDIR}/media/radarr:/config
+#       - ${STORAGEDIR}/media/movies:/movies
+#       - ${STORAGEDIR}/download:/downloads
+# #    ports:
+# #      - 7878:7878
+#     environment:
+#       - PUID=${PUID}
+#       - PGID=${PGID}
+#       - TZ=${TZ}
+#     restart: unless-stopped
+# #   traefik
+#     labels:
+#       - traefik.enable=true
+#       - traefik.port=7878
+#       - traefik.frontend.rule=Host:radarr.${DOMAINNAME}
+#       - traefik.frontend.headers.frameDeny=false
 
-  sonarr:
-    image: linuxserver/sonarr:latest
-    container_name: sonarr
-    networks:
-      - int
-      - media
-    volumes:
-      - ${CONFIGDIR}/media/sonarr:/config
-      - ${STORAGEDIR}/media/tvshows:/tv
-      - ${STORAGEDIR}/download:/downloads
-#    ports:
-#      - 8989:8989
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    restart: unless-stopped
-#   traefik
-    labels:
-      - traefik.enable=true
-      - traefik.port=8989
-      - traefik.frontend.rule=Host:sonarr.${DOMAINNAME}
-      - traefik.frontend.headers.frameDeny=false
+#   sonarr:
+#     image: linuxserver/sonarr:latest
+#     container_name: sonarr
+#     networks:
+#       - int
+#       - media
+#     volumes:
+#       - ${CONFIGDIR}/media/sonarr:/config
+#       - ${STORAGEDIR}/media/tvshows:/tv
+#       - ${STORAGEDIR}/download:/downloads
+# #    ports:
+# #      - 8989:8989
+#     environment:
+#       - PUID=${PUID}
+#       - PGID=${PGID}
+#       - TZ=${TZ}
+#     restart: unless-stopped
+# #   traefik
+#     labels:
+#       - traefik.enable=true
+#       - traefik.port=8989
+#       - traefik.frontend.rule=Host:sonarr.${DOMAINNAME}
+#       - traefik.frontend.headers.frameDeny=false
 
-  jackett:
-    image: linuxserver/jackett:latest
-    container_name: jackett
-    networks:
-      - int
-      - media
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    volumes:
-      - ${CONFIGDIR}/media/jackett:/config
-      - ${STORAGEDIR}/download:/downloads
-#    ports:
-#      - 9117:9117
-    restart: unless-stopped
-    #traefik
-    labels:
-      - traefik.enable=true
-      - traefik.port=9117
-      - traefik.frontend.rule=Host:jackett.${DOMAINNAME}
-      - traefik.frontend.headers.frameDeny=false
+#   jackett:
+#     image: linuxserver/jackett:latest
+#     container_name: jackett
+#     networks:
+#       - int
+#       - media
+#     environment:
+#       - PUID=${PUID}
+#       - PGID=${PGID}
+#       - TZ=${TZ}
+#     volumes:
+#       - ${CONFIGDIR}/media/jackett:/config
+#       - ${STORAGEDIR}/download:/downloads
+# #    ports:
+# #      - 9117:9117
+#     restart: unless-stopped
+#     #traefik
+#     labels:
+#       - traefik.enable=true
+#       - traefik.port=9117
+#       - traefik.frontend.rule=Host:jackett.${DOMAINNAME}
+#       - traefik.frontend.headers.frameDeny=false
 
   organizr:
     image: lsiocommunity/organizr:latest
@@ -178,8 +177,5 @@ networks:
   int:
     external:
       name: int
-  ext:
-    external:
-      name: ext
   media:
     name: media
