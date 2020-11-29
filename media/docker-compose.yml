@@ -36,50 +36,50 @@ services:
       - traefik.frontend.rule=Host:plex.${DOMAINNAME}
       - traefik.frontend.headers.frameDeny=false
 
-  jellyfin:
-    image: jellyfin/jellyfin:latest
-    container_name: jellyfin
-    networks:
-      - int
-      - media
-    volumes:
-      - ${CONFIGDIR}/media/jellyfin/config:/config
-      - ${CONFIGDIR}/media/jellyfin/cache:/cache
-      - ${STORAGEDIR}/media:/media:ro
-    ports:
-      # - 8096:8096
-      # - 8920:8920
-      - 7359:7359
-      - 1900:1900
-    restart: unless-stopped
-    labels:
-      - traefik.enable=true
-      - traefik.port=8096
-      - traefik.frontend.rule=Host:jellyfin.${DOMAINNAME}
-      - traefik.frontend.headers.frameDeny=false
+#   jellyfin:
+#     image: jellyfin/jellyfin:latest
+#     container_name: jellyfin
+#     networks:
+#       - int
+#       - media
+#     volumes:
+#       - ${CONFIGDIR}/media/jellyfin/config:/config
+#       - ${CONFIGDIR}/media/jellyfin/cache:/cache
+#       - ${STORAGEDIR}/media:/media:ro
+#     ports:
+#       # - 8096:8096
+#       # - 8920:8920
+#       - 7359:7359
+#       - 1900:1900
+#     restart: unless-stopped
+#     labels:
+#       - traefik.enable=true
+#       - traefik.port=8096
+#       - traefik.frontend.rule=Host:jellyfin.${DOMAINNAME}
+#       - traefik.frontend.headers.frameDeny=false
 
-  tautulli:
-    image: tautulli/tautulli:latest
-    container_name: tautulli
-    networks:
-      - int
-      - media
-    volumes:
-      - ${CONFIGDIR}/media/tautulli:/config
-      - ${CONFIGDIR}/media/plex/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-#    ports:
-#      - 8181:8181
-    restart: unless-stopped
-#   traefik
-    labels:
-      - traefik.enable=true
-      - traefik.port=8181
-      - traefik.frontend.rule=Host:tautulli.${DOMAINNAME}
-      - traefik.frontend.headers.frameDeny=false
+#   tautulli:
+#     image: tautulli/tautulli:latest
+#     container_name: tautulli
+#     networks:
+#       - int
+#       - media
+#     volumes:
+#       - ${CONFIGDIR}/media/tautulli:/config
+#       - ${CONFIGDIR}/media/plex/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro
+#     environment:
+#       - PUID=${PUID}
+#       - PGID=${PGID}
+#       - TZ=${TZ}
+# #    ports:
+# #      - 8181:8181
+#     restart: unless-stopped
+# #   traefik
+#     labels:
+#       - traefik.enable=true
+#       - traefik.port=8181
+#       - traefik.frontend.rule=Host:tautulli.${DOMAINNAME}
+#       - traefik.frontend.headers.frameDeny=false
 
 #   radarr:
 #     image: linuxserver/radarr:latest

@@ -30,52 +30,52 @@ services:
   #     - /var/run/docker.sock:/var/run/docker.sock
   #   restart: unless-stopped
 
-  guacamole:
-    image: guacamole/guacamole
-    container_name: guacamole
-    networks:
-      - int
-      - management
-#    ports:
-#      - 8088:8080
-    environment:
-      - GUACD_HOSTNAME=guacd
-      - MYSQL_HOSTNAME=guacamoleDB
-      - MYSQL_DATABASE=guacamole
-      - MYSQL_USER=guacamole
-      - MYSQL_PASSWORD=${GUACAMOLE_DB}
-    restart: unless-stopped
-#   traefik
-    labels:
-      - traefik.enable=true
-      - traefik.port=8080
-      - traefik.frontend.rule=Host:guac.${DOMAINNAME}
-      - traefik.frontend.headers.frameDeny=false
+#   guacamole:
+#     image: guacamole/guacamole
+#     container_name: guacamole
+#     networks:
+#       - int
+#       - management
+# #    ports:
+# #      - 8088:8080
+#     environment:
+#       - GUACD_HOSTNAME=guacd
+#       - MYSQL_HOSTNAME=guacamoleDB
+#       - MYSQL_DATABASE=guacamole
+#       - MYSQL_USER=guacamole
+#       - MYSQL_PASSWORD=${GUACAMOLE_DB}
+#     restart: unless-stopped
+# #   traefik
+#     labels:
+#       - traefik.enable=true
+#       - traefik.port=8080
+#       - traefik.frontend.rule=Host:guac.${DOMAINNAME}
+#       - traefik.frontend.headers.frameDeny=false
 
-  guacamoleDB:
-    image: mysql:latest
-    container_name: guacamoleDB
-    networks:
-      - management
-    environment:
-      - MYSQL_ROOT_PASSWORD=${GUACAMOLE_DB_ROOT}
-      - MYSQL_DATABASE=guacamole
-      - MYSQL_USER=guacamole
-      - MYSQL_PASSWORD=${GUACAMOLE_DB}
-#    ports:
-#      - 3306:3306
-    volumes:
-      - ${CONFIGDIR}/management/guacamoleDB/config:/etc/mysql/conf.d
-      - ${CONFIGDIR}/management/guacamoleDB/db:/var/lib/mysql
-      - ${CONFIGDIR}/management/guacamoleDB/scripts:/tmp/scripts
-    restart: unless-stopped
+#   guacamoleDB:
+#     image: mysql:latest
+#     container_name: guacamoleDB
+#     networks:
+#       - management
+#     environment:
+#       - MYSQL_ROOT_PASSWORD=${GUACAMOLE_DB_ROOT}
+#       - MYSQL_DATABASE=guacamole
+#       - MYSQL_USER=guacamole
+#       - MYSQL_PASSWORD=${GUACAMOLE_DB}
+# #    ports:
+# #      - 3306:3306
+#     volumes:
+#       - ${CONFIGDIR}/management/guacamoleDB/config:/etc/mysql/conf.d
+#       - ${CONFIGDIR}/management/guacamoleDB/db:/var/lib/mysql
+#       - ${CONFIGDIR}/management/guacamoleDB/scripts:/tmp/scripts
+#     restart: unless-stopped
 
-  guacd:
-    image: guacamole/guacd
-    container_name: guacd
-    networks:
-      - management
-    restart: unless-stopped
+  # guacd:
+  #   image: guacamole/guacd
+  #   container_name: guacd
+  #   networks:
+  #     - management
+  #   restart: unless-stopped
 
 networks:
   int:

@@ -8,17 +8,17 @@ cd management
 docker-compose up -d
 cd ..
 
-cd dev
-docker-compose up -d
-cd ..
+# cd dev
+# docker-compose up -d
+# cd ..
 
 cd media
 docker-compose up -d
 cd ..
 
-cd download
-docker-compose up -d
-cd ..
+# cd download
+# docker-compose up -d
+# cd ..
 
 cd cloud
 docker-compose up -d
@@ -28,6 +28,6 @@ cd minecraft
 docker-compose up -d
 cd ..
 
-cd monitor
-docker-compose up -d
-cd ..
+# cd monitor
+# docker-compose up -d
+# cd ..

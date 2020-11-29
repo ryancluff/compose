@@ -39,25 +39,6 @@ services:
       - ${CONFIGDIR}/dev/gogsDB/db:/var/lib/mysql
     restart: unless-stopped
 
-#   jenkins:
-#     image: jenkins/jenkins:lts
-#     container_name: jenkins
-#     networks:
-#       - dev
-#       - int
-#     volumes:
-#       - ${CONFIGDIR}/dev/jenkins:/var/jenkins_home
-# #    ports:
-# #      - 8083:8080
-# #      - 50000:50000
-#     restart: unless-stopped
-# #   traefik
-#     labels:
-#       - traefik.enable=true
-#       - traefik.port=8080
-#       - traefik.frontend.rule=Host:jenkins.${DOMAINNAME}
-#       - traefik.frontend.headers.frameDeny=false
-
 networks:
   int:
     external:
