@@ -16,38 +16,55 @@ services:
   #     - ${CONFIGDIR}/minecraft/standard/mods:/mods
   #   restart: unless-stopped
 
-  minecraft-bedrock:
-    image: itzg/minecraft-bedrock-server
-    container_name: minecraft-bedrock
-    networks:
-      - minecraft
-    ports:
-      - 19132:19132/udp
-    environment:
-      - SERVER_NAME=TheCommune
-      - DIFFICULTY=normal
-      - EULA=TRUE
-    volumes:
-      - ${CONFIGDIR}/minecraft/bedrock/data:/data
-    restart: unless-stopped
+  # minecraft-bedrock:
+  #   image: itzg/minecraft-bedrock-server
+  #   container_name: minecraft-bedrock
+  #   networks:
+  #     - minecraft
+  #   ports:
+  #     - 19132:19132/udp
+  #   environment:
+  #     - SERVER_NAME=TheCommune
+  #     - DIFFICULTY=normal
+  #     - EULA=TRUE
+  #   volumes:
+  #     - ${CONFIGDIR}/minecraft/bedrock/data:/data
+  #   restart: unless-stopped
 
-  minecraft-ftb-revelation:
-    image: itzg/minecraft-server:multiarch
-    container_name: minecraft-revelation
+  # minecraft-ftb-revelation:
+  #   image: itzg/minecraft-server:multiarch
+  #   container_name: minecraft-revelation
+  #   networks:
+  #     - minecraft
+  #   ports:
+  #     - 25565:25565
+  #   environment:
+  #     - TZ=${TZ}
+  #     - EULA=TRUE
+  #     - MEMORY=8G
+  #     - TYPE=FTBA
+  #     - FTB_MODPACK_ID=35
+  #   volumes:
+  #     - ${CONFIGDIR}/minecraft/revelation/data:/data
+  #     - ${CONFIGDIR}/minecraft/revelation/config:/config
+  #     - ${CONFIGDIR}/minecraft/revelation/mods:/mods
+  #   restart: unless-stopped
+
+  minecraft-vanilla:
+    image: itzg/minecraft-server
+    container_name: minecraft-caden
     networks:
       - minecraft
     ports:
-      - 25565:25565
+      - 25566:25565
     environment:
       - TZ=${TZ}
       - EULA=TRUE
       - MEMORY=8G
-      - TYPE=FTBA
-      - FTB_MODPACK_ID=35
     volumes:
-      - ${CONFIGDIR}/minecraft/revelation/data:/data
-      - ${CONFIGDIR}/minecraft/revelation/config:/config
-      - ${CONFIGDIR}/minecraft/revelation/mods:/mods
+      - ${CONFIGDIR}/minecraft/caden/data:/data
+      - ${CONFIGDIR}/minecraft/caden/config:/config
+      - ${CONFIGDIR}/minecraft/caden/mods:/mods
     restart: unless-stopped
 
 networks:

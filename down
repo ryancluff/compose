@@ -23,6 +23,11 @@ cd minecraft
 docker-compose down
 cd ..
 
+cd school/psyche3dAsteroidViewer
+docker-compose down
+cd ..
+cd ..
+
 cd management
 docker-compose down
 cd ..

@@ -1,72 +1,78 @@
 version: "3.7"
 services:
-  vpn:
-    image: colinhebert/pia-openvpn:latest
-    container_name: vpn
-    networks:
-      - int
-      - media
-    cap_add:
-      - net_admin
-    ports:
-     - 6881:6881
-     - 6881:6881/udp
-    devices:
-      - /dev/net/tun:/dev/net/tun
-    environment:
-#      - REGION=Finland
-      - REGION=Sweden
-#      - REGION=US East
-#      - REGION=US West
-      - USERNAME=${PIA_USER}
-      - PASSWORD=${PIA_PASS}
-    restart: unless-stopped
-
-  qbittorrent:
-    image: linuxserver/qbittorrent:latest
-    container_name: qbittorrent
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-      - UMASK_SET=022
-      - WEBUI_PORT=8080
-    volumes:
-      - ${CONFIGDIR}/download/qbittorrent:/config
-      - ${STORAGEDIR}/download:/downloads
-#    ports:
-#      - 8080:8080
+#   vpn:
+#     image: colinhebert/pia-openvpn:latest
+#     container_name: vpn
+#     networks:
+#       - int
+#       - media
+#     cap_add:
+#       - net_admin
+#     ports:
 #      - 6881:6881
 #      - 6881:6881/udp
-    depends_on: 
-      - vpn
-    network_mode: service:vpn
-    restart: unless-stopped
-#   traefik
-    labels:
-      - traefik.enable=true
-      - traefik.port=8080
-      - traefik.frontend.rule=Host:qbittorrent.${DOMAINNAME}
-      - traefik.frontend.headers.frameDeny=false
+#     devices:
+#       - /dev/net/tun:/dev/net/tun
+#     environment:
+# #      - REGION=Finland
+#       - REGION=Sweden
+# #      - REGION=US East
+# #      - REGION=US West
+#       - USERNAME=${PIA_USER}
+#       - PASSWORD=${PIA_PASS}
+#     restart: unless-stopped
 
-  # wireguard:
-  #   image: linuxserver/wireguard
-  #   container_name: wireguard
+  # vpn:
+  #   image: linuxserver/wireguard:latest
+  #   container_name: vpn
   #   cap_add:
   #     - NET_ADMIN
   #     - SYS_MODULE
+  #   networks:
+  #     - int
+  #     - media
   #   environment:
   #     - PUID=${PUID}
   #     - PGID=${PGID}
   #     - TZ=${TZ}
+  #     - PIA_USER=${PIA_USER}
+  #     - PIA_PASS=${PIA_PASS}
+  #     - PIA_AUTOCONNECT=wireguard
   #   volumes:
   #     - ${CONFIGDIR}/download/wireguard:/config
   #     - /lib/modules:/lib/modules
-  #   ports:
-  #     - 51820:51820/udp
+  #   restart: unless-stopped
   #   sysctls:
   #     - net.ipv4.conf.all.src_valid_mark=1
-  #   restart: unless-stopped
+  #     - net.ipv6.conf.all.disable_ipv6=1
+  #     - net.ipv6.conf.default.disable_ipv6=1
+
+#   qbittorrent:
+#     image: linuxserver/qbittorrent:latest
+#     container_name: qbittorrent
+#     environment:
+#       - PUID=${PUID}
+#       - PGID=${PGID}
+#       - TZ=${TZ}
+#       - UMASK_SET=022
+#       - WEBUI_PORT=8080
+#     volumes:
+#       - ${CONFIGDIR}/download/qbittorrent:/config
+#       - ${STORAGEDIR}/download:/downloads
+# #    ports:
+# #      - 8080:8080
+# #      - 6881:6881
+# #      - 6881:6881/udp
+#     depends_on: 
+#       - vpn
+#     network_mode: service:vpn
+#     restart: unless-stopped
+# #   traefik
+#     labels:
+#       - traefik.enable=true
+#       - traefik.port=8080
+#       - traefik.frontend.rule=Host:qbittorrent.${DOMAINNAME}
+#       - traefik.frontend.headers.frameDeny=false
 
 networks:
   int:
