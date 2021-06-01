@@ -1,15 +1,15 @@
 #!/bin/bash
-cd monitor
-docker-compose down
-cd ..
+# cd monitor
+# docker-compose down
+# cd ..
 
-cd dev
-docker-compose down
-cd ..
+# cd dev
+# docker-compose down
+# cd ..
 
-cd download
-docker-compose down
-cd ..
+# cd download
+# docker-compose down
+# cd ..
 
 cd cloud
 docker-compose down
@@ -23,10 +23,10 @@ cd minecraft
 docker-compose down
 cd ..
 
-cd school/psyche3dAsteroidViewer
-docker-compose down
-cd ..
-cd ..
+# cd school/psyche3dAsteroidViewer
+# docker-compose down
+# cd ..
+# cd ..
 
 cd management
 docker-compose down

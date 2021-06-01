@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   nextcloud:
-    image: linuxserver/nextcloud:latest
+    image: linuxserver/nextcloud
     container_name: nextcloud
     networks:
       - int
@@ -27,7 +27,7 @@ services:
       - traefik.frontend.headers.frameDeny=false
 
   nextcloudDB:
-    image: linuxserver/mariadb:latest
+    image: linuxserver/mariadb
     container_name: nextcloudDB
     networks:
       - cloud
@@ -46,7 +46,7 @@ services:
     restart: unless-stopped
 
   bitwarden:
-    image: bitwardenrs/server:latest
+    image: bitwardenrs/server
     container_name: bitwarden
     networks:
       - int
